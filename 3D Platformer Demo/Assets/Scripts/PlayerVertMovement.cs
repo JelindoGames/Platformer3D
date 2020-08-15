@@ -39,6 +39,24 @@ public class PlayerVertMovement : MonoBehaviour
         MetaControl.controlMode = MetaControl.ControlMode.Standard;
     }
 
+    IEnumerator Dive()
+    {
+        MetaControl.controlMode = MetaControl.ControlMode.Dive;
+        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - 2, rb.velocity.z);
+
+        yield return new WaitUntil(() => onGround());
+
+        MetaControl.controlMode = MetaControl.ControlMode.PostDive;
+
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+        MetaControl.controlMode = MetaControl.ControlMode.DiveRecovery;
+
+        yield return new WaitForSeconds(0.3f);
+
+        MetaControl.controlMode = MetaControl.ControlMode.Standard;
+    }
+
     void Update()
     {
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard)
@@ -48,19 +66,24 @@ public class PlayerVertMovement : MonoBehaviour
 
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard || MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
         {
-            if (Input.GetKeyDown(KeyCode.Space) && !onGround() && blastAvailable)
+            if (!onGround() && Input.GetKeyDown(KeyCode.Space) && blastAvailable)
             {
                 StartCoroutine("Blast");
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) && onGround())
+            if (!onGround() && Input.GetKeyDown(KeyCode.LeftShift))
             {
-                rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
+                StartCoroutine("Dive");
             }
 
             if (!onGround() && !Input.GetKey(KeyCode.Space))
             {
                 rb.velocity -= new Vector3(0, 30 * Time.deltaTime, 0);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) && onGround())
+            {
+                rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
             }
         }
     }

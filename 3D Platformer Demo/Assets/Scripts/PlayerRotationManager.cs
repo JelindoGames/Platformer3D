@@ -59,7 +59,7 @@ public class PlayerRotationManager : MonoBehaviour
         while (!(convertedCamAngle < 180 && convertedCamAngle >= -180)) //Force the convertedAngle into minimum transitionable range (-180 <= c < 180) [myAngle is minimum 0]
         {
             if (convertedCamAngle < -180) { convertedCamAngle += 360; }
-            else if (convertedCamAngle > 180) { convertedCamAngle -= 360; }
+            else if (convertedCamAngle >= 180) { convertedCamAngle -= 360; }
         }
 
         float myAngle = transform.localEulerAngles.y;
@@ -86,6 +86,15 @@ public class PlayerRotationManager : MonoBehaviour
                 break;
             case MetaControl.ControlMode.PostBlast:
                 if (vertMovement.onGround()) { turnTime = 0.15f; } else { turnTime = 0.35f; }
+                break;
+            case MetaControl.ControlMode.Dive:
+                turnTime = 1;
+                break;
+            case MetaControl.ControlMode.PostDive:
+                turnTime = 1;
+                break;
+            case MetaControl.ControlMode.DiveRecovery:
+                turnTime = 0.3f;
                 break;
         }
     }

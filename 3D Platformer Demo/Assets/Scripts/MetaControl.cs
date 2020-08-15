@@ -9,7 +9,9 @@ public class MetaControl : MonoBehaviour
         Standard,
         Blast,
         PostBlast,
-        Dive
+        Dive,
+        PostDive,
+        DiveRecovery
     }
 
     public static ControlMode controlMode;

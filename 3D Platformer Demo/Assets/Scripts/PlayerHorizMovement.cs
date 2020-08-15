@@ -6,24 +6,29 @@ public class PlayerHorizMovement : MonoBehaviour
 {
     [SerializeField] float speed = 0;
     [SerializeField] float inputSensitivity = 0;
+    PlayerVertMovement verticalMovement;
     Rigidbody rb;
     float inputPower;
     float modeMultiplier = 1;
+    bool getMeaningfulInput;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        verticalMovement = GetComponent<PlayerVertMovement>();
     }
 
     void ModifyInputPower()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S))
+        if (getMeaningfulInput)
         {
-            inputPower += inputSensitivity * Time.deltaTime;
+            if (verticalMovement.onGround()) { inputPower += inputSensitivity * Time.deltaTime; }
+            else { inputPower += inputSensitivity * Time.deltaTime * 0.75f; }
         }
         else
         {
-            inputPower -= 2 * inputSensitivity * Time.deltaTime;
+            if (verticalMovement.onGround()) { inputPower -= 2 * inputSensitivity * Time.deltaTime; }
+            else { inputPower -= inputSensitivity * Time.deltaTime * 0.5f; }
         }
 
         inputPower = Mathf.Clamp(inputPower, 0f, 1f);
@@ -34,18 +39,31 @@ public class PlayerHorizMovement : MonoBehaviour
         switch (MetaControl.controlMode)
         {
             case MetaControl.ControlMode.Blast:
-                modeMultiplier = 2f;
+                modeMultiplier = 2;
                 break;
             case MetaControl.ControlMode.PostBlast:
                 modeMultiplier -= 1f * Time.deltaTime;
                 break;
             case MetaControl.ControlMode.Standard:
+                modeMultiplier = 1;
+                break;
+            case MetaControl.ControlMode.Dive:
+                modeMultiplier = 2f;
+                break;
+            case MetaControl.ControlMode.PostDive:
+                if (modeMultiplier > 0.1f) { modeMultiplier -= 2f * Time.deltaTime; }
+                else { modeMultiplier = 0f; }
+                break;
+            case MetaControl.ControlMode.DiveRecovery:
+                if (modeMultiplier < 1.4f && getMeaningfulInput) { modeMultiplier += 3f * Time.deltaTime; }
+                else if (modeMultiplier >= 1.4f) { modeMultiplier = 1.4f; }
                 break;
         }
     }
 
     void Update()
     {
+        getMeaningfulInput = (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey (KeyCode.D));
         ModifyInputPower();
         ModifyModeMultiplier();
     }
@@ -59,6 +77,12 @@ public class PlayerHorizMovement : MonoBehaviour
         }
 
         if(MetaControl.controlMode == MetaControl.ControlMode.Blast || MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
+        {
+            Vector3 horizMovementChange = -transform.up * speed * Time.fixedDeltaTime;
+            rb.MovePosition(rb.position + horizMovementChange * modeMultiplier);
+        }
+
+        if (MetaControl.controlMode == MetaControl.ControlMode.Dive || MetaControl.controlMode == MetaControl.ControlMode.PostDive || MetaControl.controlMode == MetaControl.ControlMode.DiveRecovery)
         {
             Vector3 horizMovementChange = -transform.up * speed * Time.fixedDeltaTime;
             rb.MovePosition(rb.position + horizMovementChange * modeMultiplier);
