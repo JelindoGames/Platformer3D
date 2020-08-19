@@ -11,6 +11,7 @@ public class PlayerHorizMovement : MonoBehaviour
     float inputPower;
     float modeMultiplier = 1;
     bool getMeaningfulInput;
+    public Vector3 horizMovementChange;
 
     void Start()
     {
@@ -39,10 +40,10 @@ public class PlayerHorizMovement : MonoBehaviour
         switch (MetaControl.controlMode)
         {
             case MetaControl.ControlMode.Blast:
-                modeMultiplier = 2;
+                modeMultiplier = 2f;
                 break;
             case MetaControl.ControlMode.PostBlast:
-                modeMultiplier -= 1f * Time.deltaTime;
+                modeMultiplier -= 2f * Time.deltaTime;
                 break;
             case MetaControl.ControlMode.Standard:
                 modeMultiplier = 1;
@@ -55,7 +56,7 @@ public class PlayerHorizMovement : MonoBehaviour
                 else { modeMultiplier = 0f; }
                 break;
             case MetaControl.ControlMode.DiveRecovery:
-                if (modeMultiplier < 1.4f && getMeaningfulInput) { modeMultiplier += 3f * Time.deltaTime; }
+                if (modeMultiplier < 1.4f && getMeaningfulInput) { modeMultiplier += 5f * Time.deltaTime; }
                 else if (modeMultiplier >= 1.4f) { modeMultiplier = 1.4f; }
                 break;
         }
@@ -63,6 +64,7 @@ public class PlayerHorizMovement : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R)) { transform.position = Vector3.zero; }
         getMeaningfulInput = (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey (KeyCode.D));
         ModifyInputPower();
         ModifyModeMultiplier();
@@ -72,20 +74,23 @@ public class PlayerHorizMovement : MonoBehaviour
     {
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard)
         {
-            Vector3 horizMovementChange = inputPower * -transform.up * speed * Time.fixedDeltaTime;
-            rb.MovePosition(rb.position + horizMovementChange * modeMultiplier);
+            horizMovementChange = inputPower * -transform.up * speed * Time.fixedDeltaTime * modeMultiplier;
+            //rb.MovePosition(rb.position + horizMovementChange);
+            rb.velocity = new Vector3(horizMovementChange.x, rb.velocity.y, horizMovementChange.z);
         }
 
         if(MetaControl.controlMode == MetaControl.ControlMode.Blast || MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
         {
-            Vector3 horizMovementChange = -transform.up * speed * Time.fixedDeltaTime;
-            rb.MovePosition(rb.position + horizMovementChange * modeMultiplier);
+            horizMovementChange = -transform.up * speed * Time.fixedDeltaTime * modeMultiplier;
+            //rb.MovePosition(rb.position + horizMovementChange);
+            rb.velocity = new Vector3(horizMovementChange.x, rb.velocity.y, horizMovementChange.z);
         }
 
         if (MetaControl.controlMode == MetaControl.ControlMode.Dive || MetaControl.controlMode == MetaControl.ControlMode.PostDive || MetaControl.controlMode == MetaControl.ControlMode.DiveRecovery)
         {
-            Vector3 horizMovementChange = -transform.up * speed * Time.fixedDeltaTime;
-            rb.MovePosition(rb.position + horizMovementChange * modeMultiplier);
+            horizMovementChange = -transform.up * speed * Time.fixedDeltaTime * modeMultiplier;
+            //rb.MovePosition(rb.position + horizMovementChange);
+            rb.velocity = new Vector3(horizMovementChange.x, rb.velocity.y, horizMovementChange.z);
         }
     }
 }

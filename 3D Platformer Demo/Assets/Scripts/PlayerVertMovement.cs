@@ -30,13 +30,15 @@ public class PlayerVertMovement : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         rb.useGravity = false;
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
 
         MetaControl.controlMode = MetaControl.ControlMode.PostBlast;
         rb.useGravity = true;
 
-        yield return new WaitForSeconds(1f);
-        MetaControl.controlMode = MetaControl.ControlMode.Standard;
+        yield return new WaitForSeconds(0.5f);
+
+        if (MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
+            MetaControl.controlMode = MetaControl.ControlMode.Standard;
     }
 
     IEnumerator Dive()
@@ -48,7 +50,7 @@ public class PlayerVertMovement : MonoBehaviour
 
         MetaControl.controlMode = MetaControl.ControlMode.PostDive;
 
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift));
 
         MetaControl.controlMode = MetaControl.ControlMode.DiveRecovery;
 
@@ -66,7 +68,7 @@ public class PlayerVertMovement : MonoBehaviour
 
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard || MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
         {
-            if (!onGround() && Input.GetKeyDown(KeyCode.Space) && blastAvailable)
+            if (Input.GetKeyDown(KeyCode.Q) && blastAvailable)
             {
                 StartCoroutine("Blast");
             }
@@ -81,6 +83,14 @@ public class PlayerVertMovement : MonoBehaviour
                 rb.velocity -= new Vector3(0, 30 * Time.deltaTime, 0);
             }
 
+            if (Input.GetKeyDown(KeyCode.Space) && onGround())
+            {
+                rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
+            }
+        }
+
+        if (MetaControl.controlMode == MetaControl.ControlMode.Blast)
+        {
             if (Input.GetKeyDown(KeyCode.Space) && onGround())
             {
                 rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
