@@ -7,20 +7,23 @@ public class PlayerVertMovement : MonoBehaviour
     [SerializeField] float jumpPower = 0;
     Rigidbody rb;
     bool blastAvailable;
+    bool storedOnGround;
+    float timeAfterLanding = 0.1f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    public bool onGround()
+    IEnumerator LandingSequence()
     {
-        if (Physics.Raycast(transform.position + new Vector3(-0.5f, 0, -0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0, 0, -0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, -0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0, 0, 0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0.5f), Vector3.down, 1.03f))
-        {
-            return true;
-        }
+        timeAfterLanding = 0;
 
-        return false;
+        while (timeAfterLanding < 0.2f)
+        {
+            timeAfterLanding += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     IEnumerator Blast()
@@ -61,13 +64,20 @@ public class PlayerVertMovement : MonoBehaviour
 
     void Update()
     {
+        storedOnGround = onGround();
+
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard)
         {
             blastAvailable = true;
         }
 
-        if (MetaControl.controlMode == MetaControl.ControlMode.Standard || MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
+        if (MetaControl.controlMode == MetaControl.ControlMode.Standard || MetaControl.controlMode == MetaControl.ControlMode.Leap || MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
         {
+            if (onGround() && MetaControl.controlMode == MetaControl.ControlMode.Leap)
+            {
+                MetaControl.controlMode = MetaControl.ControlMode.Standard;
+            }
+
             if (Input.GetKeyDown(KeyCode.Q) && blastAvailable)
             {
                 StartCoroutine("Blast");
@@ -86,15 +96,29 @@ public class PlayerVertMovement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space) && onGround())
             {
                 rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
+
+                if (timeAfterLanding < 0.2f)
+                {
+                    print("Leap");
+                    MetaControl.controlMode = MetaControl.ControlMode.Leap;
+                    rb.velocity += new Vector3(0, jumpPower / 3, 0);
+                }
             }
+        }
+    }
+
+    public bool onGround()
+    {
+        if (Physics.Raycast(transform.position + new Vector3(-0.5f, 0, -0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0, 0, -0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, -0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0, 0, 0.5f), Vector3.down, 1.03f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0.5f), Vector3.down, 1.03f))
+        {
+            if (storedOnGround == false)
+            {
+                StartCoroutine("LandingSequence");
+            }
+
+            return true;
         }
 
-        if (MetaControl.controlMode == MetaControl.ControlMode.Blast)
-        {
-            if (Input.GetKeyDown(KeyCode.Space) && onGround())
-            {
-                rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
-            }
-        }
+        return false;
     }
 }

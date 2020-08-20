@@ -7,6 +7,7 @@ public class MetaControl : MonoBehaviour
     public enum ControlMode
     {
         Standard,
+        Leap,
         Blast,
         PostBlast,
         Dive,

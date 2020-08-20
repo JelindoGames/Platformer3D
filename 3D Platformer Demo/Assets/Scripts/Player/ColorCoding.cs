@@ -33,6 +33,10 @@ public class ColorCoding : MonoBehaviour
             case MetaControl.ControlMode.DiveRecovery:
                 myMat.color = new Color(0.7f, 0.7f, 0.4f, myMat.color.a);
                 break;
+            case MetaControl.ControlMode.Leap:
+                myMat.color = new Color(0, 1f, 0, myMat.color.a);
+                break;
+
         }
     }
 }

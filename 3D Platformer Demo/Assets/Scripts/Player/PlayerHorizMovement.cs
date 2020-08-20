@@ -72,7 +72,7 @@ public class PlayerHorizMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (MetaControl.controlMode == MetaControl.ControlMode.Standard)
+        if (MetaControl.controlMode == MetaControl.ControlMode.Standard || MetaControl.controlMode == MetaControl.ControlMode.Leap)
         {
             horizMovementChange = inputPower * -transform.up * speed * Time.fixedDeltaTime * modeMultiplier;
             //rb.MovePosition(rb.position + horizMovementChange);
