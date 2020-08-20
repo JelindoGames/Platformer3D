@@ -49,10 +49,10 @@ public class PlayerHorizMovement : MonoBehaviour
                 modeMultiplier = 1;
                 break;
             case MetaControl.ControlMode.Dive:
-                modeMultiplier = 2f;
+                modeMultiplier = 1.6f;
                 break;
             case MetaControl.ControlMode.PostDive:
-                if (modeMultiplier > 0.1f) { modeMultiplier -= 2f * Time.deltaTime; }
+                if (modeMultiplier > 0.1f) { modeMultiplier -= 4f * Time.deltaTime; }
                 else { modeMultiplier = 0f; }
                 break;
             case MetaControl.ControlMode.DiveRecovery:
@@ -75,21 +75,18 @@ public class PlayerHorizMovement : MonoBehaviour
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard || MetaControl.controlMode == MetaControl.ControlMode.Leap)
         {
             horizMovementChange = inputPower * -transform.up * speed * Time.fixedDeltaTime * modeMultiplier;
-            //rb.MovePosition(rb.position + horizMovementChange);
             rb.velocity = new Vector3(horizMovementChange.x, rb.velocity.y, horizMovementChange.z);
         }
 
         if(MetaControl.controlMode == MetaControl.ControlMode.Blast || MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
         {
             horizMovementChange = -transform.up * speed * Time.fixedDeltaTime * modeMultiplier;
-            //rb.MovePosition(rb.position + horizMovementChange);
             rb.velocity = new Vector3(horizMovementChange.x, rb.velocity.y, horizMovementChange.z);
         }
 
         if (MetaControl.controlMode == MetaControl.ControlMode.Dive || MetaControl.controlMode == MetaControl.ControlMode.PostDive || MetaControl.controlMode == MetaControl.ControlMode.DiveRecovery)
         {
             horizMovementChange = -transform.up * speed * Time.fixedDeltaTime * modeMultiplier;
-            //rb.MovePosition(rb.position + horizMovementChange);
             rb.velocity = new Vector3(horizMovementChange.x, rb.velocity.y, horizMovementChange.z);
         }
     }

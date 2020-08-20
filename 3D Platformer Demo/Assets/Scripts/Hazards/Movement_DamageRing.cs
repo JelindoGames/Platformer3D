@@ -42,6 +42,6 @@ public class Movement_DamageRing : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }
