@@ -28,8 +28,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 570893127413529418}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.81, y: 1.75, z: 7.22}
-  m_LocalScale: {x: 4, y: 4, z: 0.16000003}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 0.16000003}
   m_Children: []
   m_Father: {fileID: 6432147260858340185}
   m_RootOrder: 0
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26155f8ab67444a849937a408ef68162, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageToPlayer: 5
+  damageToPlayer: 2
 --- !u!1 &8005370448627917130
 GameObject:
   m_ObjectHideFlags: 0
@@ -119,6 +119,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6432147260858340185}
+  - component: {fileID: -4568915483280803571}
   m_Layer: 0
   m_Name: Damage Ring
   m_TagString: Untagged
@@ -141,3 +142,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4568915483280803571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8005370448627917130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a429ac7995e5d4794b7624659ea822cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 15
