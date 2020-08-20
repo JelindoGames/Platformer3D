@@ -16,22 +16,22 @@ public class ColorCoding : MonoBehaviour
         switch (MetaControl.controlMode)
         {
             case MetaControl.ControlMode.Blast:
-                myMat.color = Color.red;
+                myMat.color = new Color(1, 0, 0, myMat.color.a);
                 break;
             case MetaControl.ControlMode.PostBlast:
-                myMat.color = new Color(0.5f, 0, 0);
+                myMat.color = new Color(0.5f, 0, 0, myMat.color.a);
                 break;
             case MetaControl.ControlMode.Standard:
-                myMat.color = Color.gray;
+                myMat.color = new Color(0.5f, 0.5f, 0.5f, myMat.color.a);
                 break;
             case MetaControl.ControlMode.Dive:
-                myMat.color = Color.yellow;
+                myMat.color = new Color(1f, 1f, 0f, myMat.color.a);
                 break;
             case MetaControl.ControlMode.PostDive:
-                myMat.color = new Color(0.7f, 0.7f, 0);
+                myMat.color = new Color(0.7f, 0.7f, 0, myMat.color.a);
                 break;
             case MetaControl.ControlMode.DiveRecovery:
-                myMat.color = new Color(0.7f, 0.7f, 0.4f);
+                myMat.color = new Color(0.7f, 0.7f, 0.4f, myMat.color.a);
                 break;
         }
     }

@@ -6,14 +6,16 @@ public class DamageCalculator : MonoBehaviour
 {
     PlayerHorizMovement horizMovement;
     Rigidbody rb;
+    DamageTaker playerDamageTaker;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         horizMovement = GetComponent<PlayerHorizMovement>();
+        playerDamageTaker = GetComponent<DamageTaker>();
     }
 
-    float GetDamage()
+    float GetDamageToEnemy()
     {
         float damage = horizMovement.horizMovementChange.magnitude;
         if (rb.velocity.y < 0) { damage += -rb.velocity.y; }
@@ -28,20 +30,27 @@ public class DamageCalculator : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            float damage = GetDamage();
+            float damage = GetDamageToEnemy();
             GameObject enemy = other.transform.parent.gameObject;
             DamageTaker damageTaker = enemy.GetComponent<DamageTaker>();
             damageTaker.TakeDamage(damage);
-            StartCoroutine("SlowEffect");
         }
     }
 
-    IEnumerator SlowEffect()
+    void OnCollisionEnter(Collision other)
     {
-        Time.timeScale = 0.05f;
-        Time.fixedDeltaTime = 0.001f;
-        yield return new WaitForSeconds(0.005f);
-        Time.timeScale = 1;
-        Time.fixedDeltaTime = 0.02f;
+        if (other.gameObject.CompareTag("Hazard"))
+        {
+            HazardData hazardData = other.gameObject.GetComponent<HazardData>();
+
+            if (hazardData == null)
+            {
+                Debug.LogError("The hazard doesn't have the HazardData script attached.");
+            }
+            else
+            {
+                playerDamageTaker.TakeDamage(hazardData.damageToPlayer);
+            }
+        }
     }
 }

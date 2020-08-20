@@ -11,7 +11,7 @@ public class PlayerHorizMovement : MonoBehaviour
     float inputPower;
     float modeMultiplier = 1;
     bool getMeaningfulInput;
-    public Vector3 horizMovementChange;
+    [HideInInspector] public Vector3 horizMovementChange;
 
     void Start()
     {
