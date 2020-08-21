@@ -67,6 +67,14 @@ public class PlayerVertMovement : MonoBehaviour
         MetaControl.controlMode = MetaControl.ControlMode.Standard;
     }
 
+    void Leap()
+    {
+        leapDiesUponGround = false;
+        MetaControl.controlMode = MetaControl.ControlMode.Leap;
+        rb.velocity += new Vector3(0, jumpPower / 3, 0); //Adds to the jump velocity that was already there
+        StartCoroutine("LeapDieTimer");
+    }
+
     void Update()
     {
         storedOnGround = onGround();
@@ -107,11 +115,7 @@ public class PlayerVertMovement : MonoBehaviour
 
                 if (timeAfterLanding < 0.2f)
                 {
-                    leapDiesUponGround = false;
-                    print("Leap");
-                    MetaControl.controlMode = MetaControl.ControlMode.Leap;
-                    rb.velocity += new Vector3(0, jumpPower / 3, 0);
-                    StartCoroutine("LeapDieTimer");
+                    Leap();
                 }
             }
 
@@ -125,7 +129,7 @@ public class PlayerVertMovement : MonoBehaviour
 
     public bool onGround()
     {
-        if (Physics.Raycast(transform.position + new Vector3(-0.5f, 0, -0.5f), Vector3.down, 1.02f) || Physics.Raycast(transform.position + new Vector3(0, 0, -0.5f), Vector3.down, 1.02f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, -0.5f), Vector3.down, 1.02f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0), Vector3.down, 1.02f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0), Vector3.down, 1.02f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0.5f), Vector3.down, 1.02f) || Physics.Raycast(transform.position + new Vector3(0, 0, 0.5f), Vector3.down, 1.02f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0.5f), Vector3.down, 1.02f))
+        if (Physics.Raycast(transform.position + new Vector3(-0.5f, 0, -0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0, 0, -0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, -0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0, 0, 0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0.5f), Vector3.down, 1.05f))
         {
             if (storedOnGround == false)
             {

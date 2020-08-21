@@ -5,22 +5,11 @@ using UnityEngine;
 
 public class GameModeHandler : MonoBehaviour
 {
-    enum GameMode
+    public enum GameMode
     {
-        PlayerTurn,
-        EnemyTurn
+        Battle,
+        Overworld
     }
 
-    GameMode gamemode;
-    public event EventHandler beginPlayerTurn;
-    public event EventHandler beginEnemyTurn;
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            beginEnemyTurn?.Invoke(this, EventArgs.Empty);
-            print("The enemy turn begins....");
-        }
-    }
+    public static GameMode gamemode;
 }

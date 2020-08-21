@@ -5,31 +5,42 @@ using UnityEngine;
 
 public class Behavior_RingShooter : MonoBehaviour
 {
-    GameModeHandler gameModeHandler;
+    BattleController battleController;
     [SerializeField] GameObject hazardRing = null;
+    [SerializeField] float numberOfRings = 5;
+    [SerializeField] float timeBetweenRings = 1;
+    [SerializeField] float heightOfRings = 1;
 
     IEnumerator Attack()
     {
-        for (int i = 0; i < 15; i++)
+        yield return new WaitForSeconds(2);
+
+        for (int i = 0; i < numberOfRings; i++)
         {
-            Vector3 spawnPosition = transform.position + new Vector3(0, 1, 0);
+            Vector3 spawnPosition = transform.position + new Vector3(0, heightOfRings, 0);
             GameObject ringInstance = Instantiate(hazardRing, spawnPosition, Quaternion.Euler(0, GetAngleToPlayer(), 0));
             ringInstance.transform.parent = transform;
             ringInstance.name = "Ring";
 
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(timeBetweenRings);
         }
+
+        yield return new WaitForSeconds(3);
+        battleController.ProcessEnemyAttackEnd();
     }
 
     void Start()
     {
-        gameModeHandler = GameObject.Find("*GAME MODE HANDLER*").GetComponent<GameModeHandler>();
-        gameModeHandler.beginEnemyTurn += StartTurn;
+        battleController = GameObject.Find("*BATTLE CONTROLLER*").GetComponent<BattleController>();
+        battleController.beginEnemyTurn += StartTurn;
     }
 
     void StartTurn(object sender, EventArgs e)
     {
-        StartCoroutine("Attack");
+        if (this != null)
+        {
+            StartCoroutine("Attack");
+        }
     }
 
     float GetAngleToPlayer()
@@ -40,7 +51,8 @@ public class Behavior_RingShooter : MonoBehaviour
         Vector2 xzDistanceToPlayer = new Vector2(transform.position.x - player.transform.position.x, transform.position.z - player.transform.position.z);
         float angleToPlayer = Mathf.Atan2(xzDistanceToPlayer.y, xzDistanceToPlayer.x) * Mathf.Rad2Deg;
         angleToPlayer = -angleToPlayer + 90; //conversion to actually get it facing in right direction
-        angleToPlayer += UnityEngine.Random.Range(-10 - (2 * playerRB.velocity.magnitude), 10 + (2 * playerRB.velocity.magnitude));
+        float xzPlayerVelocity = new Vector2(playerRB.velocity.x, playerRB.velocity.z).magnitude;
+        angleToPlayer += UnityEngine.Random.Range(-10 - (3 * xzPlayerVelocity), 10 + (3 * xzPlayerVelocity));
         return angleToPlayer;
     }
 }

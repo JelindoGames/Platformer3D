@@ -30,10 +30,17 @@ public class DamageCalculator : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            float damage = GetDamageToEnemy();
-            GameObject enemy = other.transform.parent.gameObject;
-            DamageTaker damageTaker = enemy.GetComponent<DamageTaker>();
-            damageTaker.TakeDamage(damage);
+            if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle)
+            {
+                float damage = GetDamageToEnemy();
+                GameObject enemy = other.transform.parent.gameObject;
+                DamageTaker damageTaker = enemy.GetComponent<DamageTaker>();
+                damageTaker.TakeDamage(damage);
+            }
+            else
+            {
+                //todo: Logic that starts the battle
+            }
         }
     }
 
