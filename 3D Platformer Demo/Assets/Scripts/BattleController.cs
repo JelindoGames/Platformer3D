@@ -93,6 +93,12 @@ public class BattleController : MonoBehaviour
         }
     }
 
+    public void CallEndPlayerTurn()
+    {
+        StopCoroutine("EndPlayerTurn");
+        StartCoroutine("EndPlayerTurn");
+    }
+
     IEnumerator EndPlayerTurn()
     {
         //todo make enemies impossible to hit for this second

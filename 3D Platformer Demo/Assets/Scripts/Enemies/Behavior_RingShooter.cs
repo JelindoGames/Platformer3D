@@ -25,7 +25,7 @@ public class Behavior_RingShooter : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenRings);
         }
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
         battleController.ProcessEnemyAttackEnd();
     }
 

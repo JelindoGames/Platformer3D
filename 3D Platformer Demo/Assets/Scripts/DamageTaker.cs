@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,17 +11,10 @@ public class DamageTaker : MonoBehaviour
     Health health;
     BattleController battleController;
 
-    IEnumerator SlowEffect()
-    {
-        Time.timeScale = 0.05f;
-        Time.fixedDeltaTime = 0.001f;
-        yield return new WaitForSeconds(0.005f);
-        Time.timeScale = 1;
-        Time.fixedDeltaTime = 0.02f;
-    }
-
     public void TakeDamage(float amount)
     {
+        if (!enabled) return;
+
         health.health -= amount;
         damageText.text = "-" + amount.ToString();
 
@@ -28,24 +22,34 @@ public class DamageTaker : MonoBehaviour
         {
             if (!gameObject.CompareTag("Player"))
             {
-                battleController.ProcessEnemyDeath();
-                Destroy(gameObject); //todo Do a death animation
+                DieEnemy();
             }
         }
         else
         {
-            StartCoroutine("AnimateText");
-            StartCoroutine("SlowEffect");
+            ProcessHit();
+        }
+    }
 
-            if (gameObject.CompareTag("Player"))
-            {
-                StartCoroutine("InvincibilityFrames");
-            }
-            else
-            {
-                battleController.ProcessEnemyHit();
-                //todo make enemy unhittable here
-            }
+    void DieEnemy()
+    {
+        battleController.ProcessEnemyDeath();
+        Destroy(gameObject); //todo Do a death animation
+    }
+
+    void ProcessHit()
+    {
+        StartCoroutine("AnimateText");
+        StartCoroutine("SlowEffect");
+
+        if (gameObject.CompareTag("Player"))
+        {
+            StartCoroutine("InvincibilityFrames");
+        }
+        else
+        {
+            battleController.ProcessEnemyHit();
+            GetComponent<EnemyHitStatus>().BecomeNonTarget();
         }
     }
 
@@ -74,6 +78,15 @@ public class DamageTaker : MonoBehaviour
         gameObject.layer = 0;
     }
 
+    IEnumerator SlowEffect()
+    {
+        Time.timeScale = 0.05f;
+        Time.fixedDeltaTime = 0.001f;
+        yield return new WaitForSeconds(0.005f);
+        Time.timeScale = 1;
+        Time.fixedDeltaTime = 0.02f;
+    }
+
     void Start()
     {
         battleController = GameObject.Find("*BATTLE CONTROLLER*").GetComponent<BattleController>();
@@ -82,5 +95,4 @@ public class DamageTaker : MonoBehaviour
         damageText.text = "";
         health = GetComponent<Health>();
     }
-
 }

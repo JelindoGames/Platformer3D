@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Hazard
+  - BattleFall
   layers:
   - Default
   - TransparentFX

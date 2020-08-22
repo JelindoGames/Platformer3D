@@ -40,6 +40,7 @@ public class BattleSpawn : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        transform.position = new Vector3(0, 0, 0); //todo make starting pos more flexible
         myCollider.enabled = true;
         rb.useGravity = true;
 
