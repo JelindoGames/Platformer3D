@@ -10,6 +10,7 @@ public class PlayerVertMovement : MonoBehaviour
     bool storedOnGround;
     float timeAfterLanding = 0.1f;
     bool leapDiesUponGround = false;
+    bool getMaintainedSpaceInput;
 
     void Start()
     {
@@ -20,7 +21,7 @@ public class PlayerVertMovement : MonoBehaviour
     {
         timeAfterLanding = 0;
 
-        while (timeAfterLanding < 0.2f)
+        while (timeAfterLanding < 0.1f)
         {
             timeAfterLanding += Time.deltaTime;
             yield return new WaitForEndOfFrame();
@@ -79,6 +80,12 @@ public class PlayerVertMovement : MonoBehaviour
     {
         storedOnGround = onGround();
 
+        if (Input.GetKeyDown(KeyCode.Space))
+            StartCoroutine("MaintainSpaceInput");
+
+        if (MetaControl.controlMode == MetaControl.ControlMode.Standard)
+            StopCoroutine("Dive");
+
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard || MetaControl.controlMode == MetaControl.ControlMode.Leap)
         {
             blastAvailable = true;
@@ -109,17 +116,17 @@ public class PlayerVertMovement : MonoBehaviour
                 rb.velocity -= new Vector3(0, 30 * Time.deltaTime, 0);
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) && onGround() && MetaControl.controlMode != MetaControl.ControlMode.Blast)
+            if (getMaintainedSpaceInput && onGround() && MetaControl.controlMode != MetaControl.ControlMode.Blast)
             {
                 rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
 
-                if (timeAfterLanding < 0.2f)
+                if (timeAfterLanding < 0.1f)
                 {
                     Leap();
                 }
             }
 
-            if (onGround() && MetaControl.controlMode == MetaControl.ControlMode.Leap && leapDiesUponGround)
+            if (MetaControl.controlMode == MetaControl.ControlMode.Leap && onGround() && leapDiesUponGround)
             {
                 MetaControl.controlMode = MetaControl.ControlMode.Standard;
                 leapDiesUponGround = false;
@@ -140,6 +147,21 @@ public class PlayerVertMovement : MonoBehaviour
         }
 
         return false;
+    }
+
+    IEnumerator MaintainSpaceInput()
+    {
+        getMaintainedSpaceInput = true;
+
+        float timer = 0;
+
+        while (timer < 0.05f && Input.GetKey(KeyCode.Space))
+        {
+            timer += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        getMaintainedSpaceInput = false;
     }
 
     IEnumerator LeapDieTimer()

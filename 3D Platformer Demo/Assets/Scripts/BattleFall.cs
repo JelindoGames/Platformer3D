@@ -8,11 +8,15 @@ public class BattleFall : MonoBehaviour
     BattleController battleController;
     bool isPlayerTurn = true;
 
-    void RespawnPlayer()
+    void RespawnPlayer(Collider other)
     {
         if (isPlayerTurn)
         {
             battleController.CallEndPlayerTurn();
+        }
+        else
+        {
+            other.gameObject.GetComponent<BattleSpawn>().StartCoroutine("LeapBack", 0);
         }
     }
 
@@ -31,7 +35,7 @@ public class BattleFall : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             other.GetComponent<DamageTaker>().TakeDamage(5);
-            RespawnPlayer();
+            RespawnPlayer(other);
         }
     }
 

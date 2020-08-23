@@ -13,6 +13,7 @@ public class Health : MonoBehaviour
     void Start()
     {
         healthText = transform.Find("Health Display").GetComponent<TextMesh>();
+        if (healthText == null) { Debug.LogError("This GameObject needs a 3Dtext child called 'Health Display' to show Health."); }
     }
 
     void Update()

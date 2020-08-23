@@ -13,15 +13,15 @@ public class BattleSpawn : MonoBehaviour
 
     void TransitionForPlayerTurn(object sender, EventArgs e)
     {
-        StartCoroutine(LeapBack(true));
+        StartCoroutine(LeapBack(1));
     }
 
     void TransitionForEnemyTurn(object sender, EventArgs e)
     {
-        StartCoroutine(LeapBack(false));
+        StartCoroutine(LeapBack(2));
     }
 
-    IEnumerator LeapBack(bool isForPlayerTurn)
+    IEnumerator LeapBack(int reasonForTransition)
     {
         MetaControl.controlMode = MetaControl.ControlMode.Standard;
         rb.velocity = new Vector3(0, 0, 0);
@@ -49,13 +49,21 @@ public class BattleSpawn : MonoBehaviour
         horizScript.enabled = true;
         vertScript.enabled = true;
 
-        if (isForPlayerTurn)
+        DisplayReason(reasonForTransition);
+    }
+
+    void DisplayReason(int reason)
+    {
+        switch (reason)
         {
-            print("The player attacks! You have 10 seconds!");
-        }
-        else
-        {
-            print("The enemy attacks!");
+            case 1:
+                print("The player attacks! You have 10 seconds!");
+                break;
+            case 2:
+                print("The enemy attacks!");
+                break;
+            default:
+                break;
         }
     }
 

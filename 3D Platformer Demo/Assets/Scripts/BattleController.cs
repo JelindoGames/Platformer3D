@@ -102,7 +102,8 @@ public class BattleController : MonoBehaviour
     IEnumerator EndPlayerTurn()
     {
         //todo make enemies impossible to hit for this second
-        yield return new WaitForSeconds(1);
+        //yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0);
 
         beginEnemyTurn?.Invoke(this, EventArgs.Empty);
         print("The enemy turn begins....");
@@ -118,11 +119,13 @@ public class BattleController : MonoBehaviour
 
     IEnumerator Countdown()
     {
+        yield return new WaitForSeconds(1); //To coincide with the respawn second
+
         while (timeLeftForPlayerTurn > 0)
         {
-            yield return new WaitForSeconds(1);
             print(timeLeftForPlayerTurn);
             timeLeftForPlayerTurn--;
+            yield return new WaitForSeconds(1);
         }
 
         StartCoroutine("EndPlayerTurn");

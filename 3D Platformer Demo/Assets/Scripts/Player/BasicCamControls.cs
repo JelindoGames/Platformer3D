@@ -6,9 +6,10 @@ public class BasicCamControls : MonoBehaviour
 {
     [SerializeField] Transform subject = null;
     [SerializeField] float mouseSensitivity = 0;
+    [SerializeField] float vertMouseSensitivity = 0;
     [HideInInspector] public float angle = Mathf.PI * 3f/2f;
     float offsetDistance;
-    float lookAtHeight = 0;
+    float y = 0;
 
     void Start()
     {
@@ -18,7 +19,6 @@ public class BasicCamControls : MonoBehaviour
         Vector3 initialOffsetXZ = initialOffset - new Vector3(0, initialOffset.y, 0);
         Vector3 subjectXZ = subject.transform.position - new Vector3(0, subject.transform.position.y, 0);
         offsetDistance = Vector3.Distance(initialOffsetXZ, subjectXZ);
-        lookAtHeight = subject.transform.position.y;
     }
 
     void ModifyAngle()
@@ -30,7 +30,9 @@ public class BasicCamControls : MonoBehaviour
     {
         float x = Mathf.Cos(angle) * offsetDistance;
         float z = Mathf.Sin(angle) * offsetDistance;
-        Vector3 offset = new Vector3(x, 3, z);
+        y += Input.GetAxis("Mouse Y") * vertMouseSensitivity;
+        y = Mathf.Clamp(y, -1, 3);
+        Vector3 offset = new Vector3(x, 3 + y, z);
         return offset;
     }
 

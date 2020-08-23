@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DamageTaker : MonoBehaviour
 {
@@ -20,7 +21,12 @@ public class DamageTaker : MonoBehaviour
 
         if (health.health <= 0)
         {
-            if (!gameObject.CompareTag("Player"))
+            if (gameObject.CompareTag("Player"))
+            {
+                //todo actual game over
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+            else
             {
                 DieEnemy();
             }
