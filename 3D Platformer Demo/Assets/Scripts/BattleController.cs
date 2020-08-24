@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleController : MonoBehaviour
 {
@@ -91,6 +92,16 @@ public class BattleController : MonoBehaviour
             beginPlayerTurn?.Invoke(this, EventArgs.Empty);
             print("The player turn begins....");
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     public void CallEndPlayerTurn()
@@ -105,16 +116,22 @@ public class BattleController : MonoBehaviour
         //yield return new WaitForSeconds(1);
         yield return new WaitForSeconds(0);
 
-        beginEnemyTurn?.Invoke(this, EventArgs.Empty);
-        print("The enemy turn begins....");
+        if (liveEnemies > 0)
+        {
+            beginEnemyTurn?.Invoke(this, EventArgs.Empty);
+            print("The enemy turn begins....");
+        }
     }
 
     IEnumerator EndEnemyTurn()
     {
         yield return new WaitForSeconds(1);
 
-        beginPlayerTurn?.Invoke(this, EventArgs.Empty);
-        print("The player turn begins....");
+        if (liveEnemies > 0)
+        {
+            beginPlayerTurn?.Invoke(this, EventArgs.Empty);
+            print("The player turn begins....");
+        }
     }
 
     IEnumerator Countdown()

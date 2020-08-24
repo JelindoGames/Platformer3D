@@ -11,6 +11,7 @@ public class DamageTaker : MonoBehaviour
     TextMesh healthText;
     Health health;
     BattleController battleController;
+    bool isSlowEffectRunning;
 
     public void TakeDamage(float amount)
     {
@@ -28,25 +29,19 @@ public class DamageTaker : MonoBehaviour
             }
             else
             {
-                DieEnemy();
+                StartCoroutine("ProcessKill");
             }
         }
         else
         {
-            ProcessHit();
+            StartCoroutine("ProcessHit");
         }
     }
 
-    void DieEnemy()
-    {
-        battleController.ProcessEnemyDeath();
-        Destroy(gameObject); //todo Do a death animation
-    }
-
-    void ProcessHit()
+    IEnumerator ProcessHit()
     {
         StartCoroutine("AnimateText");
-        StartCoroutine("SlowEffect");
+        StartCoroutine(SlowEffect(false));
 
         if (gameObject.CompareTag("Player"))
         {
@@ -54,9 +49,24 @@ public class DamageTaker : MonoBehaviour
         }
         else
         {
+            yield return new WaitUntil(() => !isSlowEffectRunning);
             battleController.ProcessEnemyHit();
             GetComponent<EnemyHitStatus>().BecomeNonTarget();
         }
+    }
+
+    IEnumerator ProcessKill()
+    {
+        StartCoroutine("AnimateText");
+        StartCoroutine(SlowEffect(true)); //At the end, SlowEffect calls DieEnemy(), which is below
+        yield return new WaitUntil(() => !isSlowEffectRunning);
+        DieEnemy();
+    }
+
+    void DieEnemy()
+    {
+        battleController.ProcessEnemyDeath();
+        Destroy(gameObject); //todo Do a death animation
     }
 
     IEnumerator AnimateText()
@@ -66,8 +76,8 @@ public class DamageTaker : MonoBehaviour
 
         while (damageText.color.g > 0)
         {
-            healthText.color -= new Color(1f * Time.deltaTime, 1f * Time.deltaTime, 1f * Time.deltaTime, 0f);
-            damageText.color -= new Color(0, 1f * Time.deltaTime, 1f * Time.deltaTime, 0f);
+            healthText.color -= new Color(1f * Time.deltaTime / Time.timeScale, 1f * Time.deltaTime / Time.timeScale, 1f * Time.deltaTime / Time.timeScale, 0f);
+            damageText.color -= new Color(0, 1f * Time.deltaTime / Time.timeScale, 1f * Time.deltaTime / Time.timeScale, 0f);
             yield return new WaitForEndOfFrame();
         }
     }
@@ -84,13 +94,28 @@ public class DamageTaker : MonoBehaviour
         gameObject.layer = 0;
     }
 
-    IEnumerator SlowEffect()
+    IEnumerator SlowEffect(bool isKill)
     {
-        Time.timeScale = 0.05f;
-        Time.fixedDeltaTime = 0.001f;
-        yield return new WaitForSeconds(0.005f);
-        Time.timeScale = 1;
-        Time.fixedDeltaTime = 0.02f;
+        isSlowEffectRunning = true;
+
+        if (!isKill)
+        {
+            Time.timeScale = 0.05f;
+            Time.fixedDeltaTime = 0.001f;
+            yield return new WaitForSeconds(0.005f);
+            Time.timeScale = 1;
+            Time.fixedDeltaTime = 0.02f;
+        }
+        else
+        {
+            Time.timeScale = 0.05f;
+            Time.fixedDeltaTime = 0.001f;
+            yield return new WaitForSeconds(0.04f);
+            Time.timeScale = 1;
+            Time.fixedDeltaTime = 0.02f;
+        }
+
+        isSlowEffectRunning = false;
     }
 
     void Start()
