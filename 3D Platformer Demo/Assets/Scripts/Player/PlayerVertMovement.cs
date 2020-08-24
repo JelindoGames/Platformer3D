@@ -10,7 +10,7 @@ public class PlayerVertMovement : MonoBehaviour
     bool storedOnGround;
     float timeAfterLanding = 0.1f;
     bool leapDiesUponGround = false;
-    bool getMaintainedSpaceInput;
+    bool getMaintainedJumpInput;
 
     void Start()
     {
@@ -59,7 +59,7 @@ public class PlayerVertMovement : MonoBehaviour
 
         MetaControl.controlMode = MetaControl.ControlMode.PostDive;
 
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift));
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || ControllerWizardData.GetJumpButtonDown || Input.GetKeyDown(KeyCode.LeftShift) || ControllerWizardData.GetDiveButtonDown);
 
         MetaControl.controlMode = MetaControl.ControlMode.DiveRecovery;
 
@@ -80,8 +80,8 @@ public class PlayerVertMovement : MonoBehaviour
     {
         storedOnGround = onGround();
 
-        if (Input.GetKeyDown(KeyCode.Space))
-            StartCoroutine("MaintainSpaceInput");
+        if (Input.GetKeyDown(KeyCode.Space) || ControllerWizardData.GetJumpButtonDown)
+            StartCoroutine("MaintainJumpInput");
 
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard)
             StopCoroutine("Dive");
@@ -93,7 +93,7 @@ public class PlayerVertMovement : MonoBehaviour
 
         if (MetaControl.controlMode == MetaControl.ControlMode.Blast)
         {
-            if (!onGround() && Input.GetKeyDown(KeyCode.LeftShift))
+            if (!onGround() && (Input.GetKeyDown(KeyCode.LeftShift) || ControllerWizardData.GetDiveButtonDown))
             {
                 StartCoroutine("Dive");
             }
@@ -101,22 +101,22 @@ public class PlayerVertMovement : MonoBehaviour
 
         if (MetaControl.controlMode == MetaControl.ControlMode.Standard || MetaControl.controlMode == MetaControl.ControlMode.Leap || MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
         {
-            if (Input.GetKeyDown(KeyCode.Q) && blastAvailable)
+            if ((Input.GetKeyDown(KeyCode.Q) || ControllerWizardData.GetBlastButtonDown) && blastAvailable)
             {
                 StartCoroutine("Blast");
             }
 
-            if (!onGround() && Input.GetKeyDown(KeyCode.LeftShift))
+            if (!onGround() && (Input.GetKeyDown(KeyCode.LeftShift) || ControllerWizardData.GetDiveButtonDown))
             {
                 StartCoroutine("Dive");
             }
 
-            if (!onGround() && !Input.GetKey(KeyCode.Space))
+            if (!onGround() && !Input.GetKey(KeyCode.Space) && !ControllerWizardData.GetJumpButton)
             {
                 rb.velocity -= new Vector3(0, 30 * Time.deltaTime, 0);
             }
 
-            if (getMaintainedSpaceInput && onGround() && MetaControl.controlMode != MetaControl.ControlMode.Blast)
+            if (getMaintainedJumpInput && onGround() && MetaControl.controlMode != MetaControl.ControlMode.Blast)
             {
                 rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
 
@@ -149,19 +149,19 @@ public class PlayerVertMovement : MonoBehaviour
         return false;
     }
 
-    IEnumerator MaintainSpaceInput()
+    IEnumerator MaintainJumpInput()
     {
-        getMaintainedSpaceInput = true;
+        getMaintainedJumpInput = true;
 
         float timer = 0;
 
-        while (timer < 0.05f && Input.GetKey(KeyCode.Space))
+        while (timer < 0.05f && (Input.GetKey(KeyCode.Space) || ControllerWizardData.GetJumpButton))
         {
             timer += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
 
-        getMaintainedSpaceInput = false;
+        getMaintainedJumpInput = false;
     }
 
     IEnumerator LeapDieTimer()

@@ -50,6 +50,7 @@ public class DamageTaker : MonoBehaviour
         else
         {
             yield return new WaitUntil(() => !isSlowEffectRunning);
+            MetaControl.controlMode = MetaControl.ControlMode.Standard;
             battleController.ProcessEnemyHit();
             GetComponent<EnemyHitStatus>().BecomeNonTarget();
         }
@@ -60,6 +61,7 @@ public class DamageTaker : MonoBehaviour
         StartCoroutine("AnimateText");
         StartCoroutine(SlowEffect(true)); //At the end, SlowEffect calls DieEnemy(), which is below
         yield return new WaitUntil(() => !isSlowEffectRunning);
+        MetaControl.controlMode = MetaControl.ControlMode.Standard;
         DieEnemy();
     }
 

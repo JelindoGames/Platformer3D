@@ -7,6 +7,8 @@ public class BasicCamControls : MonoBehaviour
     [SerializeField] Transform subject = null;
     [SerializeField] float mouseSensitivity = 0;
     [SerializeField] float vertMouseSensitivity = 0;
+    [SerializeField] float controllerSensitivity = 0;
+    [SerializeField] float vertControllerSensitivity = 0;
     [HideInInspector] public float angle = Mathf.PI * 3f/2f;
     float offsetDistance;
     float y = 0;
@@ -24,6 +26,8 @@ public class BasicCamControls : MonoBehaviour
     void ModifyAngle()
     {
         angle -= Input.GetAxis("Mouse X") * mouseSensitivity;
+        angle -= ControllerWizardData.GetHorizontalMoveAxis * controllerSensitivity * 0.2f * Time.deltaTime;
+        angle -= ControllerWizardData.GetHorizontalCamAxis * controllerSensitivity * Time.deltaTime;
     }
 
     Vector3 GetOffset()
@@ -31,6 +35,7 @@ public class BasicCamControls : MonoBehaviour
         float x = Mathf.Cos(angle) * offsetDistance;
         float z = Mathf.Sin(angle) * offsetDistance;
         y += Input.GetAxis("Mouse Y") * vertMouseSensitivity;
+        y += ControllerWizardData.GetVerticalCamAxis * vertControllerSensitivity * Time.deltaTime;
         y = Mathf.Clamp(y, -1, 3);
         Vector3 offset = new Vector3(x, 3 + y, z);
         return offset;

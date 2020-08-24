@@ -11,6 +11,7 @@ public class PlayerHorizMovement : MonoBehaviour
     float inputPower;
     float modeMultiplier = 1;
     bool getMeaningfulInput;
+    bool getMeaningfulControllerInput;
     [HideInInspector] public Vector3 horizMovementChange;
 
     void Start()
@@ -25,6 +26,12 @@ public class PlayerHorizMovement : MonoBehaviour
         {
             if (verticalMovement.onGround()) { inputPower += inputSensitivity * Time.deltaTime; }
             else { inputPower += inputSensitivity * Time.deltaTime * 0.75f; }
+        }
+        else if (getMeaningfulControllerInput)
+        {
+            float controllerPower = new Vector2(ControllerWizardData.GetHorizontalMoveAxis, ControllerWizardData.GetVerticalMoveAxis).magnitude;
+            if (verticalMovement.onGround()) { inputPower += inputSensitivity * controllerPower * Time.deltaTime; }
+            else { inputPower += inputSensitivity * controllerPower * Time.deltaTime * 0.75f; }
         }
         else
         {
@@ -43,7 +50,7 @@ public class PlayerHorizMovement : MonoBehaviour
                 modeMultiplier = 2f;
                 break;
             case MetaControl.ControlMode.PostBlast:
-                modeMultiplier -= 2f * Time.deltaTime;
+                modeMultiplier -= 2.5f * Time.deltaTime;
                 break;
             case MetaControl.ControlMode.Standard:
                 modeMultiplier = 1;
@@ -66,6 +73,7 @@ public class PlayerHorizMovement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R)) { transform.position = Vector3.zero; }
         getMeaningfulInput = (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey (KeyCode.D));
+        getMeaningfulControllerInput = Mathf.Abs(ControllerWizardData.GetVerticalMoveAxis) > Mathf.Epsilon || Mathf.Abs(ControllerWizardData.GetHorizontalMoveAxis) > Mathf.Epsilon;
         ModifyInputPower();
         ModifyModeMultiplier();
     }

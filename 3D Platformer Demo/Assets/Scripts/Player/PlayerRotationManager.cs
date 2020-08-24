@@ -11,6 +11,16 @@ public class PlayerRotationManager : MonoBehaviour
 
     float GetAngleChangeByInput()
     {
+        if (Mathf.Abs(ControllerWizardData.GetVerticalMoveAxis) > Mathf.Epsilon || Mathf.Abs(ControllerWizardData.GetHorizontalMoveAxis) > Mathf.Epsilon)
+        {
+            float y = ControllerWizardData.GetVerticalMoveAxis;
+            float x = ControllerWizardData.GetHorizontalMoveAxis;
+            float angle = Mathf.Atan2(y, x) * Mathf.Rad2Deg;
+            angle = -angle + 90;
+            if (angle > 180) angle -= 360;
+            return angle;
+        }
+
         if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
         {
             return -45;
@@ -101,7 +111,7 @@ public class PlayerRotationManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Mathf.Abs(ControllerWizardData.GetVerticalMoveAxis) > Mathf.Epsilon || Mathf.Abs(ControllerWizardData.GetHorizontalMoveAxis) > Mathf.Epsilon)
         {
             float myAngle = transform.localEulerAngles.y;
             float goalAngle = GetGoalAngle();
