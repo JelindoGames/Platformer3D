@@ -18,4 +18,9 @@ public class ControllerWizardData : MonoBehaviour
 
     public static float GetVerticalCamAxis;
     public static float GetHorizontalCamAxis;
+
+    public static bool GetSnapRightButtonDown;
+    public static bool GetSnapRightButton;
+    public static bool GetSnapLeftButtonDown;
+    public static bool GetSnapLeftButton;
 }

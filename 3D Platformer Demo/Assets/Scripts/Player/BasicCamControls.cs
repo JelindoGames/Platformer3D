@@ -10,6 +10,7 @@ public class BasicCamControls : MonoBehaviour
     [SerializeField] float controllerSensitivity = 0;
     [SerializeField] float vertControllerSensitivity = 0;
     [HideInInspector] public float angle = Mathf.PI * 3f/2f;
+    [SerializeField] float snapSpeed = 1;
     float offsetDistance;
     float y = 0;
 
@@ -26,8 +27,22 @@ public class BasicCamControls : MonoBehaviour
     void ModifyAngle()
     {
         angle -= Input.GetAxis("Mouse X") * mouseSensitivity;
-        angle -= ControllerWizardData.GetHorizontalMoveAxis * controllerSensitivity * 0.2f * Time.deltaTime;
         angle -= ControllerWizardData.GetHorizontalCamAxis * controllerSensitivity * Time.deltaTime;
+        if (GameModeHandler.gamemode == GameModeHandler.GameMode.Overworld)
+                    angle -= ControllerWizardData.GetHorizontalMoveAxis * controllerSensitivity * 0.2f * Time.deltaTime;
+    }
+
+    void SnapAngle()
+    {
+        if (ControllerWizardData.GetSnapLeftButtonDown)
+        {
+            StartCoroutine("SnapAngleAnimation", 90);
+        }
+
+        if (ControllerWizardData.GetSnapRightButtonDown)
+        {
+            StartCoroutine("SnapAngleAnimation", -90);
+        }
     }
 
     Vector3 GetOffset()
@@ -44,6 +59,7 @@ public class BasicCamControls : MonoBehaviour
     void Update()
     {
         ModifyAngle();
+        SnapAngle();
     }
 
     void LateUpdate()
@@ -52,5 +68,22 @@ public class BasicCamControls : MonoBehaviour
         transform.position = subject.transform.position + offset;
         Vector3 subjectXZ = subject.transform.position - new Vector3(0, subject.transform.position.y, 0);
         transform.LookAt(subjectXZ + new Vector3(0, subject.transform.position.y, 0));
+    }
+
+    IEnumerator SnapAngleAnimation(float degrees)
+    {
+        degrees = degrees * Mathf.Deg2Rad;
+
+        float amountMoved = 0;
+        float timeSinceStart = 0;
+
+        while (amountMoved < 90)
+        {
+            timeSinceStart += Time.deltaTime;
+            float prevAmountMoved = amountMoved;
+            amountMoved = Mathf.SmoothStep(0, degrees, timeSinceStart * snapSpeed);
+            angle += (amountMoved - prevAmountMoved);
+            yield return new WaitForEndOfFrame();
+        }
     }
 }

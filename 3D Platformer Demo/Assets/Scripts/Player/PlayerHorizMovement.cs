@@ -56,7 +56,7 @@ public class PlayerHorizMovement : MonoBehaviour
                 modeMultiplier = 1;
                 break;
             case MetaControl.ControlMode.Dive:
-                modeMultiplier = 1.6f;
+                modeMultiplier = 1.8f;
                 break;
             case MetaControl.ControlMode.PostDive:
                 if (modeMultiplier > 0.1f) { modeMultiplier -= 4f * Time.deltaTime; }

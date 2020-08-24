@@ -301,7 +301,6 @@
 /define:ENABLE_LEGACY_INPUT_MANAGER
 /define:CSHARP_7_OR_LATER
 /define:CSHARP_7_3_OR_NEWER
-"Assets/ControllerSupportTest.cs"
 "Assets/Scripts/BattleController.cs"
 "Assets/Scripts/BattleFall.cs"
 "Assets/Scripts/DamageTaker.cs"
@@ -311,6 +310,8 @@
 "Assets/Scripts/Hazards/Movement_DamageRing.cs"
 "Assets/Scripts/Health.cs"
 "Assets/Scripts/LookAt.cs"
+"Assets/Scripts/Meta/ControllerWizard.cs"
+"Assets/Scripts/Meta/ControllerWizardData.cs"
 "Assets/Scripts/Meta/GameModeHandler.cs"
 "Assets/Scripts/Player/BasicCamControls.cs"
 "Assets/Scripts/Player/BattleSpawn.cs"
@@ -320,4 +321,5 @@
 "Assets/Scripts/Player/PlayerHorizMovement.cs"
 "Assets/Scripts/Player/PlayerRotationManager.cs"
 "Assets/Scripts/Player/PlayerVertMovement.cs"
+"Assets/Scripts/Testing/ControllerSupportTest.cs"
 "Assets/Scripts/Testing/MovingTest.cs"
