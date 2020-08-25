@@ -8,6 +8,37 @@ public class DamageCalculator : MonoBehaviour
     Rigidbody rb;
     DamageTaker playerDamageTaker;
 
+    void OnCollisionEnter(Collision other) //GETTING HIT BY A HAZARD
+    {
+        HazardData hazardInfo = other.gameObject.GetComponent<HazardData>();
+
+        if (hazardInfo != null && hazardInfo.enabled)
+        {
+            playerDamageTaker.TakeDamage(hazardInfo.damageToPlayer);
+        }
+    }
+
+    void OnTriggerEnter(Collider other) //DEALING DAMAGE TO AN ENEMY
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle)
+            {
+                float damage = GetDamageToEnemy();
+
+                GameObject enemy = other.transform.parent.gameObject;
+                while (enemy.GetComponent<DamageTaker>() == null) { enemy = enemy.transform.parent.gameObject; }
+
+                DamageTaker damageTaker = enemy.GetComponent<DamageTaker>();
+                damageTaker.TakeDamage(damage);
+            }
+            else
+            {
+                //todo: Logic that starts the battle
+            }
+        }
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -24,40 +55,5 @@ public class DamageCalculator : MonoBehaviour
         damage *= 0.1f;
 
         return damage;
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Enemy"))
-        {
-            if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle)
-            {
-                float damage = GetDamageToEnemy();
-                GameObject enemy = other.transform.parent.gameObject;
-                DamageTaker damageTaker = enemy.GetComponent<DamageTaker>();
-                damageTaker.TakeDamage(damage);
-            }
-            else
-            {
-                //todo: Logic that starts the battle
-            }
-        }
-    }
-
-    void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Hazard"))
-        {
-            HazardData hazardData = other.gameObject.GetComponent<HazardData>();
-
-            if (hazardData == null)
-            {
-                Debug.LogError("The hazard doesn't have the HazardData script attached.");
-            }
-            else
-            {
-                playerDamageTaker.TakeDamage(hazardData.damageToPlayer);
-            }
-        }
     }
 }

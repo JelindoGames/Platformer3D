@@ -63,7 +63,7 @@ public class PlayerHorizMovement : MonoBehaviour
                 else { modeMultiplier = 0f; }
                 break;
             case MetaControl.ControlMode.DiveRecovery:
-                if (modeMultiplier < 1.4f && getMeaningfulInput) { modeMultiplier += 5f * Time.deltaTime; }
+                if (modeMultiplier < 1.4f && getMeaningfulInput) { modeMultiplier += 10f * Time.deltaTime; }
                 else if (modeMultiplier >= 1.4f) { modeMultiplier = 1.4f; }
                 break;
         }

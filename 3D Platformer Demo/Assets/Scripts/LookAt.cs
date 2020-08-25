@@ -13,6 +13,8 @@ public class LookAt : MonoBehaviour
 
     void Update()
     {
-        transform.LookAt(transform.position - cam.transform.position);
+        //transform.LookAt(transform.position - cam.transform.position);
+        transform.LookAt(cam.transform);
+        transform.Rotate(0, 180, 0);
     }
 }

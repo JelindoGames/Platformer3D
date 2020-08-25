@@ -70,10 +70,10 @@ public class PlayerVertMovement : MonoBehaviour
 
     void Leap()
     {
-        leapDiesUponGround = false;
         MetaControl.controlMode = MetaControl.ControlMode.Leap;
-        rb.velocity += new Vector3(0, jumpPower / 3, 0); //Adds to the jump velocity that was already there
+        leapDiesUponGround = false;
         StartCoroutine("LeapDieTimer");
+        rb.velocity += new Vector3(0, jumpPower / 3, 0); //Adds to the jump velocity that was already there
     }
 
     void Update()

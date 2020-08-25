@@ -13,10 +13,16 @@ public class BattleController : MonoBehaviour
     int timeLeftForPlayerTurn;
     int enemyAttacksCompleted = 0;
 
+    public void InitiateBattle() //RN only called by debug key
+    {
+        TakeHeadCount(this, EventArgs.Empty);
+        TransitionToPlayerTurn(); //todo make enemy turn happen under certain conditions
+    }
+
     void Start()
     {
         beginPlayerTurn += TakeHeadCount;
-        beginPlayerTurn += SetTimer;
+        //beginPlayerTurn += SetTimer;
         beginEnemyTurn += TakeHeadCount;
         beginEnemyTurn += KillTimer;
     }
@@ -28,7 +34,7 @@ public class BattleController : MonoBehaviour
         enemyAttacksCompleted = 0;
     }
 
-    void SetTimer(object sender, EventArgs e)
+    public void SetTimer() //Called by BattleSpawn
     {
         timeLeftForPlayerTurn = 10;
         StartCoroutine("Countdown");
@@ -40,104 +46,70 @@ public class BattleController : MonoBehaviour
         StopCoroutine("Countdown");
     }
 
+    void EndBattle()
+    {
+        StopAllCoroutines();
+        print("The battle is over!");
+    }
+
     public void ProcessEnemyDeath() //called by an enemy's damage taker script when killed
     {
         liveEnemies--;
 
         if (liveEnemies == 0)
         {
-            StopAllCoroutines();
-            print("The battle is over!");
+            EndBattle();
             return;
         }
 
         if (hitEnemies == liveEnemies)
         {
             if (timeLeftForPlayerTurn > 0)
-                StartCoroutine("EndPlayerTurn");
+                TransitionToEnemyTurn();
         }
     }
 
-    public void ProcessEnemyHit() //called by an enemy's damage taker script when hit but not killed
+    public void ProcessEnemyHit() //Called by an enemy's damage taker script when hit but not killed
     {
         hitEnemies++;
 
         if (hitEnemies == liveEnemies)
         {
             if (timeLeftForPlayerTurn > 0)
-                StartCoroutine("EndPlayerTurn");
+                TransitionToEnemyTurn();
         }
     }
 
-    public void ProcessEnemyAttackEnd()
+    public void ProcessEnemyAttackEnd() //Called by an enemy's behavior script once its attack has been completed
     {
         enemyAttacksCompleted++;
 
         if (enemyAttacksCompleted == liveEnemies)
         {
-            StartCoroutine("EndEnemyTurn");
+            TransitionToPlayerTurn();
         }
     }
 
-    void Update()
+    public void TransitionToEnemyTurn() //May be called by BattleFall or Debug Script
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            beginEnemyTurn?.Invoke(this, EventArgs.Empty);
-            print("The enemy turn begins....");
-        }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            beginPlayerTurn?.Invoke(this, EventArgs.Empty);
-            print("The player turn begins....");
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
-    }
-
-    public void CallEndPlayerTurn()
-    {
-        StopCoroutine("EndPlayerTurn");
-        StartCoroutine("EndPlayerTurn");
-    }
-
-    IEnumerator EndPlayerTurn()
-    {
-        //todo make enemies impossible to hit for this second
-        //yield return new WaitForSeconds(1);
-        yield return new WaitForSeconds(0);
-
         if (liveEnemies > 0)
         {
             beginEnemyTurn?.Invoke(this, EventArgs.Empty);
-            print("The enemy turn begins....");
+            print("Transition => Enemy Turn....");
         }
     }
 
-    IEnumerator EndEnemyTurn()
+    public void TransitionToPlayerTurn() //May be called by Debug Script
     {
-        yield return new WaitForSeconds(1);
-
         if (liveEnemies > 0)
         {
             beginPlayerTurn?.Invoke(this, EventArgs.Empty);
-            print("The player turn begins....");
+            print("Transition => Player Turn....");
         }
     }
 
     IEnumerator Countdown()
     {
-        yield return new WaitForSeconds(1); //To coincide with the respawn second
-
         while (timeLeftForPlayerTurn > 0)
         {
             print(timeLeftForPlayerTurn);
@@ -145,6 +117,24 @@ public class BattleController : MonoBehaviour
             yield return new WaitForSeconds(1);
         }
 
-        StartCoroutine("EndPlayerTurn");
+        TransitionToEnemyTurn();
+    }
+
+    public void enablePlayer(int statement, GameObject player, PlayerHorizMovement horizScript, PlayerVertMovement vertScript) //called by battleSpawn after spawn
+    {
+        horizScript.enabled = true;
+        vertScript.enabled = true;
+
+        switch (statement)
+        {
+            case 1:
+                print("End transition. Player attacks!");
+                break;
+            case 2:
+                print("End transition. Enemy attacks!");
+                break;
+            default:
+                break;
+        }
     }
 }

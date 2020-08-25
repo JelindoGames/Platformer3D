@@ -13,22 +13,22 @@ public class BattleSpawn : MonoBehaviour
 
     void TransitionForPlayerTurn(object sender, EventArgs e)
     {
-        StartCoroutine(LeapBack(1));
+        StartCoroutine("LeapBack", 1);
     }
 
     void TransitionForEnemyTurn(object sender, EventArgs e)
     {
-        StartCoroutine(LeapBack(2));
+        StartCoroutine("LeapBack", 2);
     }
 
     IEnumerator LeapBack(int reasonForTransition)
     {
         MetaControl.controlMode = MetaControl.ControlMode.Standard;
-        rb.velocity = new Vector3(0, 0, 0);
         horizScript.enabled = false;
         vertScript.enabled = false;
         rb.useGravity = false;
         myCollider.enabled = false;
+        rb.velocity = new Vector3(0, 0, 0);
 
         Vector3 distanceToMove = -transform.position;
         float distanceMoved = 0;
@@ -44,27 +44,15 @@ public class BattleSpawn : MonoBehaviour
         myCollider.enabled = true;
         rb.useGravity = true;
 
-        yield return new WaitForSeconds(1);
-
-        horizScript.enabled = true;
-        vertScript.enabled = true;
-
-        DisplayReason(reasonForTransition);
+        StartCoroutine("FluffPeriod", reasonForTransition);
     }
 
-    void DisplayReason(int reason)
+    IEnumerator FluffPeriod(int reason)
     {
-        switch (reason)
-        {
-            case 1:
-                print("The player attacks! You have 10 seconds!");
-                break;
-            case 2:
-                print("The enemy attacks!");
-                break;
-            default:
-                break;
-        }
+        yield return new WaitForSeconds(1);
+
+        if (reason == 1) battleController.SetTimer();
+        battleController.enablePlayer(reason, gameObject, horizScript, vertScript);
     }
 
     void Start()

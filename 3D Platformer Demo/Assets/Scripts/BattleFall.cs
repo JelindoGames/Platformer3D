@@ -12,7 +12,7 @@ public class BattleFall : MonoBehaviour
     {
         if (isPlayerTurn)
         {
-            battleController.CallEndPlayerTurn();
+            battleController.TransitionToEnemyTurn();
         }
         else
         {
