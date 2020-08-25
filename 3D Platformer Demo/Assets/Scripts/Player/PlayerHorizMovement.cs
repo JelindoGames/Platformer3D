@@ -59,7 +59,7 @@ public class PlayerHorizMovement : MonoBehaviour
                 modeMultiplier = 1.8f;
                 break;
             case MetaControl.ControlMode.PostDive:
-                if (modeMultiplier > 0.1f) { modeMultiplier -= 4f * Time.deltaTime; }
+                if (modeMultiplier > 0.1f) { modeMultiplier -= 3f * Time.deltaTime; }
                 else { modeMultiplier = 0f; }
                 break;
             case MetaControl.ControlMode.DiveRecovery:
@@ -97,5 +97,10 @@ public class PlayerHorizMovement : MonoBehaviour
             horizMovementChange = -transform.up * speed * Time.fixedDeltaTime * modeMultiplier;
             rb.velocity = new Vector3(horizMovementChange.x, rb.velocity.y, horizMovementChange.z);
         }
+    }
+
+    void OnEnable()
+    {
+        inputPower = 0;
     }
 }

@@ -53,15 +53,17 @@ public class PlayerVertMovement : MonoBehaviour
     {
         MetaControl.controlMode = MetaControl.ControlMode.Dive;
         rb.useGravity = true;
-        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - 6, rb.velocity.z);
+        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - 9, rb.velocity.z);
 
         yield return new WaitUntil(() => onGround());
 
-        MetaControl.controlMode = MetaControl.ControlMode.PostDive;
+        if (MetaControl.controlMode == MetaControl.ControlMode.Dive) { MetaControl.controlMode = MetaControl.ControlMode.PostDive; }
+        else yield break;
 
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || ControllerWizardData.GetJumpButtonDown || Input.GetKeyDown(KeyCode.LeftShift) || ControllerWizardData.GetDiveButtonDown);
 
-        MetaControl.controlMode = MetaControl.ControlMode.DiveRecovery;
+        if (MetaControl.controlMode == MetaControl.ControlMode.PostDive) { MetaControl.controlMode = MetaControl.ControlMode.DiveRecovery; }
+        else yield break;
 
         yield return new WaitForSeconds(0.3f);
 

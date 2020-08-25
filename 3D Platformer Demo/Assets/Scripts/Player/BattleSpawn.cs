@@ -35,9 +35,9 @@ public class BattleSpawn : MonoBehaviour
 
         while (distanceMoved < distanceToMove.magnitude)
         {
+            yield return new WaitForEndOfFrame();
             transform.position += distanceToMove * 5 * Time.deltaTime;
             distanceMoved += distanceToMove.magnitude * 5 * Time.deltaTime;
-            yield return new WaitForEndOfFrame();
         }
 
         transform.position = new Vector3(0, 0, 0); //todo make starting pos more flexible

@@ -22,7 +22,6 @@ public class BattleController : MonoBehaviour
     void Start()
     {
         beginPlayerTurn += TakeHeadCount;
-        //beginPlayerTurn += SetTimer;
         beginEnemyTurn += TakeHeadCount;
         beginEnemyTurn += KillTimer;
     }
@@ -52,7 +51,7 @@ public class BattleController : MonoBehaviour
         print("The battle is over!");
     }
 
-    public void ProcessEnemyDeath() //called by an enemy's damage taker script when killed
+    public void ProcessEnemyDeath(GameObject enemyToDestroy) //called by an enemy's damage taker script when killed
     {
         liveEnemies--;
 
@@ -83,6 +82,7 @@ public class BattleController : MonoBehaviour
     public void ProcessEnemyAttackEnd() //Called by an enemy's behavior script once its attack has been completed
     {
         enemyAttacksCompleted++;
+        liveEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length; //Redundancy to fix the bug where Destroy() isn't fast enough to lose an enemy's place in the counter at the beginning of turn
 
         if (enemyAttacksCompleted == liveEnemies)
         {
