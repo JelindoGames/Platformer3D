@@ -10,7 +10,7 @@ public class BattleController : MonoBehaviour
     public event EventHandler beginEnemyTurn;
     int liveEnemies;
     int hitEnemies;
-    int timeLeftForPlayerTurn;
+    public int timeLeftForPlayerTurn; //for access by the Battle Timer Display
     int enemyAttacksCompleted = 0;
 
     public void InitiateBattle() //RN only called by debug key
@@ -21,6 +21,7 @@ public class BattleController : MonoBehaviour
 
     void Start()
     {
+        timeLeftForPlayerTurn = -1;
         beginPlayerTurn += TakeHeadCount;
         beginEnemyTurn += TakeHeadCount;
         beginEnemyTurn += KillTimer;
@@ -95,7 +96,6 @@ public class BattleController : MonoBehaviour
         if (liveEnemies > 0)
         {
             beginEnemyTurn?.Invoke(this, EventArgs.Empty);
-            print("Transition => Enemy Turn....");
         }
     }
 
@@ -104,7 +104,6 @@ public class BattleController : MonoBehaviour
         if (liveEnemies > 0)
         {
             beginPlayerTurn?.Invoke(this, EventArgs.Empty);
-            print("Transition => Player Turn....");
         }
     }
 
@@ -112,29 +111,16 @@ public class BattleController : MonoBehaviour
     {
         while (timeLeftForPlayerTurn > 0)
         {
-            print(timeLeftForPlayerTurn);
-            timeLeftForPlayerTurn--;
             yield return new WaitForSeconds(1);
+            timeLeftForPlayerTurn--;
         }
 
         TransitionToEnemyTurn();
     }
 
-    public void enablePlayer(int statement, GameObject player, PlayerHorizMovement horizScript, PlayerVertMovement vertScript) //called by battleSpawn after spawn
+    public void enablePlayer(int statement, GameObject player, PlayerHorizMovement horizScript, PlayerVertMovement vertScript) //called by battleSpawn after Spawn Fluff Period
     {
         horizScript.enabled = true;
         vertScript.enabled = true;
-
-        switch (statement)
-        {
-            case 1:
-                print("End transition. Player attacks!");
-                break;
-            case 2:
-                print("End transition. Enemy attacks!");
-                break;
-            default:
-                break;
-        }
     }
 }
