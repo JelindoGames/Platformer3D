@@ -8,19 +8,9 @@ public class DamageCalculator : MonoBehaviour
     Rigidbody rb;
     DamageTaker playerDamageTaker;
 
-    void OnCollisionEnter(Collision other) //GETTING HIT BY A HAZARD
+    void OnTriggerEnter(Collider other)
     {
-        HazardData hazardInfo = other.gameObject.GetComponent<HazardData>();
-
-        if (hazardInfo != null && hazardInfo.enabled)
-        {
-            playerDamageTaker.TakeDamage(hazardInfo.damageToPlayer);
-        }
-    }
-
-    void OnTriggerEnter(Collider other) //DEALING DAMAGE TO AN ENEMY
-    {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Enemy")) //DEALING DAMAGE TO AN ENEMY
         {
             if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle)
             {
@@ -36,6 +26,23 @@ public class DamageCalculator : MonoBehaviour
             {
                 //todo: Logic that starts the battle
             }
+        }
+
+        HazardData hazardInfo = other.gameObject.GetComponent<HazardData>(); //GETTING HIT BY A HAZARD
+
+        if (hazardInfo != null && hazardInfo.enabled)
+        {
+            playerDamageTaker.TakeDamage(hazardInfo.damageToPlayer);
+        }
+    }
+
+    void OnCollisionEnter(Collision other) //GETTING HIT BY A HAZARD. (redundancy because some hazards can't be triggers, since they're concave)
+    {
+        HazardData hazardInfo = other.gameObject.GetComponent<HazardData>();
+
+        if (hazardInfo != null && hazardInfo.enabled)
+        {
+            playerDamageTaker.TakeDamage(hazardInfo.damageToPlayer);
         }
     }
 

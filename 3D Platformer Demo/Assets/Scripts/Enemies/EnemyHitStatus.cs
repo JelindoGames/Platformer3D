@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class EnemyHitStatus : MonoBehaviour
 {
-    [Header("Don't Include Invisible Geometry")]
     [SerializeField] GameObject[] visibleGeometry = null;
+    [SerializeField] GameObject[] hittableGeometry = null;
     [SerializeField] Material placeholderEnemyMaterial = null;
     BattleController battleController;
 
@@ -15,6 +15,7 @@ public class EnemyHitStatus : MonoBehaviour
         if (this != null)
         {
             GetComponent<DamageTaker>().enabled = true;
+            enableHazardProperties(false);
             placeholderEnemyMaterial.color = Color.black;
             EnableOpaqueGeometry(true);
         }
@@ -25,6 +26,7 @@ public class EnemyHitStatus : MonoBehaviour
         if (this != null)
         {
             GetComponent<DamageTaker>().enabled = false;
+            enableHazardProperties(false);
             EnableOpaqueGeometry(false);
             //todo actual animation
         }
@@ -35,6 +37,7 @@ public class EnemyHitStatus : MonoBehaviour
         if (this != null)
         {
             GetComponent<DamageTaker>().enabled = false;
+            enableHazardProperties(true);
             placeholderEnemyMaterial.color = Color.red;
             EnableOpaqueGeometry(true);
         }
@@ -58,7 +61,33 @@ public class EnemyHitStatus : MonoBehaviour
         }
     }
 
-    void Start()
+    void enableHazardProperties(bool status)
+    {
+        if (status == false)
+        {
+            foreach (GameObject thing in hittableGeometry)
+            {
+                HazardData hazardData = thing.GetComponent<HazardData>();
+                thing.layer = 0;
+
+                if (hazardData == null) { Debug.LogError("No Hazard Data attached to some hittable geometry"); }
+                else { thing.GetComponent<HazardData>().enabled = false; }
+            }
+        }
+        else
+        {
+            foreach (GameObject thing in hittableGeometry)
+            {
+                HazardData hazardData = thing.GetComponent<HazardData>();
+                thing.layer = 9;
+
+                if (hazardData == null) { Debug.LogError("No Hazard Data attached to some hittable geometry"); }
+                else { thing.GetComponent<HazardData>().enabled = true; }
+            }
+        }
+    }
+
+        void Start()
     {
         battleController = GameObject.Find("*BATTLE CONTROLLER*").GetComponent<BattleController>();
         battleController.beginEnemyTurn += BecomeHazardous;
