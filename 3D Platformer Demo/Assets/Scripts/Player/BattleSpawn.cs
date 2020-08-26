@@ -52,7 +52,7 @@ public class BattleSpawn : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         if (reason == 1) battleController.SetTimer();
-        battleController.enablePlayer(reason, gameObject, horizScript, vertScript);
+        battleController.enablePlayer();
     }
 
     void Start()

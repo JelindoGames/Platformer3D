@@ -35,7 +35,7 @@ public class PlayerHorizMovement : MonoBehaviour
         }
         else
         {
-            if (verticalMovement.onGround()) { inputPower -= 2 * inputSensitivity * Time.deltaTime; }
+            if (verticalMovement.onGround()) { inputPower -= 2.5f * inputSensitivity * Time.deltaTime; }
             else { inputPower -= inputSensitivity * Time.deltaTime * 0.5f; }
         }
 
@@ -56,10 +56,10 @@ public class PlayerHorizMovement : MonoBehaviour
                 modeMultiplier = 1;
                 break;
             case MetaControl.ControlMode.Dive:
-                modeMultiplier = 1.8f;
+                modeMultiplier = 1.5f;
                 break;
             case MetaControl.ControlMode.PostDive:
-                if (modeMultiplier > 0.1f) { modeMultiplier -= 3f * Time.deltaTime; }
+                if (modeMultiplier > 0.1f) { modeMultiplier -= 2f * Time.deltaTime; }
                 else { modeMultiplier = 0f; }
                 break;
             case MetaControl.ControlMode.DiveRecovery:

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class BattlePromptDisplay : MonoBehaviour
 {
     BattleController battleController;
-    [SerializeField] Text[] textsToDisplayOn;
+    [SerializeField] Text[] textsToDisplayOn = null;
 
     void Start()
     {

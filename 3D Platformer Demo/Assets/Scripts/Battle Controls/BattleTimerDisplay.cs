@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class BattleTimerDisplay : MonoBehaviour
 {
     BattleController battleController;
-    [SerializeField] Text[] textsToDisplayOn;
+    [SerializeField] Text[] textsToDisplayOn = null;
 
     void Start()
     {

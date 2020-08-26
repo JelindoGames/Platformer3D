@@ -7,8 +7,8 @@ public class GameModeHandler : MonoBehaviour
 {
     public enum GameMode
     {
-        Battle,
-        Overworld
+        Overworld,
+        Battle
     }
 
     public static GameMode gamemode;

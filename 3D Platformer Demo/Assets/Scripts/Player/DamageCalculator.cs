@@ -10,9 +10,9 @@ public class DamageCalculator : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Enemy")) //DEALING DAMAGE TO AN ENEMY
+        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("PunchingBag")) //DEALING DAMAGE TO AN ENEMY OR PUNCHING BAG
         {
-            if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle)
+            if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle || other.gameObject.CompareTag("PunchingBag"))
             {
                 float damage = GetDamageToEnemy();
 

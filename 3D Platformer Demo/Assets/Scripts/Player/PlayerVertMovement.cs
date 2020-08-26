@@ -53,7 +53,7 @@ public class PlayerVertMovement : MonoBehaviour
     {
         MetaControl.controlMode = MetaControl.ControlMode.Dive;
         rb.useGravity = true;
-        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - 9, rb.velocity.z);
+        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - 6, rb.velocity.z);
 
         yield return new WaitUntil(() => onGround());
 

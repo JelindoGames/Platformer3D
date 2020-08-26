@@ -6,15 +6,36 @@ using UnityEngine.SceneManagement;
 
 public class BattleController : MonoBehaviour
 {
+    [SerializeField] BattleFadeIn battleInitiationImage = null;
+    [SerializeField] PlayerHorizMovement horizScript = null;
+    [SerializeField] PlayerVertMovement vertScript = null;
+    [SerializeField] GameObject player = null;
+    [SerializeField] Rigidbody playerRB = null;
+
     public event EventHandler beginPlayerTurn;
     public event EventHandler beginEnemyTurn;
     int liveEnemies;
     int hitEnemies;
-    public int timeLeftForPlayerTurn; //for access by the Battle Timer Display
     int enemyAttacksCompleted = 0;
+    [HideInInspector] public int timeLeftForPlayerTurn; //for access by the Battle Timer Display
 
-    public void InitiateBattle() //RN only called by debug key
+    IEnumerator BattleStartSequence()
     {
+        GameModeHandler.gamemode = GameModeHandler.GameMode.Battle;
+        horizScript.enabled = false;
+        vertScript.enabled = false;
+        playerRB.velocity = Vector3.zero;
+        battleInitiationImage.Transition();
+
+        yield return new WaitUntil(()=> battleInitiationImage.fadedIn);
+
+        battleInitiationImage.fadedIn = false; //for next battle
+        player.transform.position = Vector3.zero;
+
+        yield return new WaitUntil(() => battleInitiationImage.fadedOut);
+        battleInitiationImage.fadedOut = false; //for next battle
+        yield return new WaitForSeconds(1);
+
         TakeHeadCount(this, EventArgs.Empty);
         TransitionToPlayerTurn(); //todo make enemy turn happen under certain conditions
     }
@@ -29,7 +50,7 @@ public class BattleController : MonoBehaviour
 
     void TakeHeadCount(object sender, EventArgs e)
     {
-        liveEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
+        liveEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length; //todo only count the enemies under the EnemySpawner object
         hitEnemies = 0;
         enemyAttacksCompleted = 0;
     }
@@ -48,6 +69,7 @@ public class BattleController : MonoBehaviour
 
     void EndBattle()
     {
+        GameModeHandler.gamemode = GameModeHandler.GameMode.Overworld;
         StopAllCoroutines();
         print("The battle is over!");
     }
@@ -118,9 +140,14 @@ public class BattleController : MonoBehaviour
         TransitionToEnemyTurn();
     }
 
-    public void enablePlayer(int statement, GameObject player, PlayerHorizMovement horizScript, PlayerVertMovement vertScript) //called by battleSpawn after Spawn Fluff Period
+    public void enablePlayer() //called by battleSpawn after Spawn Fluff Period
     {
         horizScript.enabled = true;
         vertScript.enabled = true;
+    }
+
+    public void InitiateBattle() //RN only called by debug key
+    {
+        StartCoroutine("BattleStartSequence");
     }
 }

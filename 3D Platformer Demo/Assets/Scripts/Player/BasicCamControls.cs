@@ -20,8 +20,7 @@ public class BasicCamControls : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Vector3 initialOffset = transform.position - subject.transform.position;
         Vector3 initialOffsetXZ = initialOffset - new Vector3(0, initialOffset.y, 0);
-        Vector3 subjectXZ = subject.transform.position - new Vector3(0, subject.transform.position.y, 0);
-        offsetDistance = Vector3.Distance(initialOffsetXZ, subjectXZ);
+        offsetDistance = initialOffsetXZ.magnitude;
     }
 
     void ModifyAngle()
