@@ -17,6 +17,14 @@ public class BattlePromptDisplay : MonoBehaviour
         battleController.beginPlayerTurn += initiatePlayerTurnText;
     }
 
+    void Update()
+    {
+        if (GameModeHandler.gamemode == GameModeHandler.GameMode.Overworld)
+        {
+            foreach (Text txt in textsToDisplayOn) { txt.text = ""; }
+        }
+    }
+
     IEnumerator EnemyTurnSequence()
     {
         foreach (Text txt in textsToDisplayOn) { txt.text = "READY..."; }

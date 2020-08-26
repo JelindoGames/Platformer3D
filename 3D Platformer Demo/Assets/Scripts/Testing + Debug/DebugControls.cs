@@ -16,7 +16,7 @@ public class DebugControls : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.B))
         {
-            battleController.InitiateBattle();
+            battleController.InitiateBattle(null);
         }
 
         if (Input.GetKeyDown(KeyCode.E))

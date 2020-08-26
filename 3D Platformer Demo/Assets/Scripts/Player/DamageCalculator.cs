@@ -7,6 +7,7 @@ public class DamageCalculator : MonoBehaviour
     PlayerHorizMovement horizMovement;
     Rigidbody rb;
     DamageTaker playerDamageTaker;
+    BattleController battleController;
 
     void OnTriggerEnter(Collider other)
     {
@@ -24,7 +25,7 @@ public class DamageCalculator : MonoBehaviour
             }
             else
             {
-                //todo: Logic that starts the battle
+                battleController.InitiateBattle(other.gameObject);
             }
         }
 
@@ -51,6 +52,7 @@ public class DamageCalculator : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         horizMovement = GetComponent<PlayerHorizMovement>();
         playerDamageTaker = GetComponent<DamageTaker>();
+        battleController = GameObject.Find("*BATTLE CONTROLLER*").GetComponent<BattleController>();
     }
 
     float GetDamageToEnemy()

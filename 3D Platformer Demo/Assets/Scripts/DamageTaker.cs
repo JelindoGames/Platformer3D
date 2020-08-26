@@ -123,8 +123,8 @@ public class DamageTaker : MonoBehaviour
     void Start()
     {
         battleController = GameObject.Find("*BATTLE CONTROLLER*").GetComponent<BattleController>();
-        healthText = transform.Find("Health Display").GetComponent<TextMesh>();
-        damageText = transform.Find("Damage Display").GetComponent<TextMesh>();
+        healthText = transform.Find("Health Display").gameObject.GetComponent<TextMesh>();
+        damageText = transform.Find("Damage Display").gameObject.GetComponent<TextMesh>();
         damageText.text = "";
         health = GetComponent<Health>();
     }

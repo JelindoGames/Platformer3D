@@ -17,10 +17,17 @@ public class BattleTimerDisplay : MonoBehaviour
     {
         foreach(Text txt in textsToDisplayOn)
         {
-            float timeLeft = battleController.timeLeftForPlayerTurn;
+            if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle)
+            {
+                float timeLeft = battleController.timeLeftForPlayerTurn;
 
-            if (timeLeft >= 0) { txt.text = timeLeft.ToString(); }
-            else { txt.text = ""; }
+                if (timeLeft >= 0) { txt.text = timeLeft.ToString(); }
+                else { txt.text = ""; }
+            }
+            else
+            {
+                txt.text = "";
+            }
         }
     }
 }

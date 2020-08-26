@@ -11,6 +11,7 @@ public class BattleController : MonoBehaviour
     [SerializeField] PlayerVertMovement vertScript = null;
     [SerializeField] GameObject player = null;
     [SerializeField] Rigidbody playerRB = null;
+    [SerializeField] GameObject enemyHolder = null;
 
     public event EventHandler beginPlayerTurn;
     public event EventHandler beginEnemyTurn;
@@ -19,26 +20,7 @@ public class BattleController : MonoBehaviour
     int enemyAttacksCompleted = 0;
     [HideInInspector] public int timeLeftForPlayerTurn; //for access by the Battle Timer Display
 
-    IEnumerator BattleStartSequence()
-    {
-        GameModeHandler.gamemode = GameModeHandler.GameMode.Battle;
-        horizScript.enabled = false;
-        vertScript.enabled = false;
-        playerRB.velocity = Vector3.zero;
-        battleInitiationImage.Transition();
-
-        yield return new WaitUntil(()=> battleInitiationImage.fadedIn);
-
-        battleInitiationImage.fadedIn = false; //for next battle
-        player.transform.position = Vector3.zero;
-
-        yield return new WaitUntil(() => battleInitiationImage.fadedOut);
-        battleInitiationImage.fadedOut = false; //for next battle
-        yield return new WaitForSeconds(1);
-
-        TakeHeadCount(this, EventArgs.Empty);
-        TransitionToPlayerTurn(); //todo make enemy turn happen under certain conditions
-    }
+    Vector3 savedPosition;
 
     void Start()
     {
@@ -50,7 +32,7 @@ public class BattleController : MonoBehaviour
 
     void TakeHeadCount(object sender, EventArgs e)
     {
-        liveEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length; //todo only count the enemies under the EnemySpawner object
+        liveEnemies = enemyHolder.transform.childCount; //todo only count the enemies under the EnemySpawner object
         hitEnemies = 0;
         enemyAttacksCompleted = 0;
     }
@@ -65,13 +47,6 @@ public class BattleController : MonoBehaviour
     {
         timeLeftForPlayerTurn = -1;
         StopCoroutine("Countdown");
-    }
-
-    void EndBattle()
-    {
-        GameModeHandler.gamemode = GameModeHandler.GameMode.Overworld;
-        StopAllCoroutines();
-        print("The battle is over!");
     }
 
     public void ProcessEnemyDeath(GameObject enemyToDestroy) //called by an enemy's damage taker script when killed
@@ -140,14 +115,65 @@ public class BattleController : MonoBehaviour
         TransitionToEnemyTurn();
     }
 
-    public void enablePlayer() //called by battleSpawn after Spawn Fluff Period
+    public void enablePlayer() //called by battleSpawn after Spawn Fluff Period, and this script after battle end
     {
         horizScript.enabled = true;
         vertScript.enabled = true;
     }
 
-    public void InitiateBattle() //RN only called by debug key
+    public void InitiateBattle(GameObject enemyBeingFought) //Called by Debug Key or Hitting an Enemy in the Overworld
     {
-        StartCoroutine("BattleStartSequence");
+        GameModeHandler.gamemode = GameModeHandler.GameMode.Battle;
+        StartCoroutine("BattleStartSequence", enemyBeingFought);
+    }
+
+    void EndBattle()
+    {
+        GameModeHandler.gamemode = GameModeHandler.GameMode.Overworld;
+        StopAllCoroutines();
+        StartCoroutine("BattleEndSequence");
+    }
+
+    IEnumerator BattleStartSequence(GameObject enemyFromOverworld)
+    {
+        savedPosition = player.transform.position;
+        horizScript.enabled = false;
+        vertScript.enabled = false;
+        playerRB.velocity = Vector3.zero;
+        playerRB.useGravity = false;
+        battleInitiationImage.Transition();
+
+        yield return new WaitUntil(() => battleInitiationImage.fadedIn);
+
+        battleInitiationImage.fadedIn = false; //for next battle
+        Destroy(enemyFromOverworld);
+        MetaControl.controlMode = MetaControl.ControlMode.Standard;
+        player.transform.position = Vector3.zero;
+        playerRB.useGravity = true;
+
+        yield return new WaitUntil(() => battleInitiationImage.fadedOut);
+        battleInitiationImage.fadedOut = false; //for next battle
+        yield return new WaitForSeconds(1);
+
+        TakeHeadCount(this, EventArgs.Empty);
+        TransitionToPlayerTurn(); //todo make enemy turn happen under certain conditions
+    }
+
+    IEnumerator BattleEndSequence()
+    {
+        horizScript.enabled = false;
+        vertScript.enabled = false;
+        playerRB.velocity = Vector3.zero;
+        battleInitiationImage.Transition();
+
+        yield return new WaitUntil(() => battleInitiationImage.fadedIn);
+
+        battleInitiationImage.fadedIn = false; //for next battle
+        player.transform.position = savedPosition;
+
+        yield return new WaitUntil(() => battleInitiationImage.fadedOut);
+        battleInitiationImage.fadedOut = false; //for next battle
+
+        enablePlayer();
     }
 }
