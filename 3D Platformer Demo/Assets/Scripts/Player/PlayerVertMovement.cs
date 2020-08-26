@@ -138,14 +138,24 @@ public class PlayerVertMovement : MonoBehaviour
 
     public bool onGround()
     {
-        if (Physics.Raycast(transform.position + new Vector3(-0.5f, 0, -0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0, 0, -0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, -0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(-0.5f, 0, 0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0, 0, 0.5f), Vector3.down, 1.05f) || Physics.Raycast(transform.position + new Vector3(0.5f, 0, 0.5f), Vector3.down, 1.05f))
-        {
-            if (storedOnGround == false)
-            {
-                StartCoroutine("LandingSequence");
-            }
+        Vector3[] positionsToStartRay = { new Vector3(-0.5f, 0, -0.5f), new Vector3(0, 0, -0.5f), new Vector3(0.5f, 0, -0.5f), new Vector3(-0.5f, 0, 0), new Vector3(0.5f, 0, 0), new Vector3(-0.5f, 0, 0.5f), new Vector3(0, 0, 0.5f), new Vector3(0.5f, 0, 0.5f) };
 
-            return true;
+        for (int i = 0; i < positionsToStartRay.Length; i++)
+        {
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position + positionsToStartRay[i], Vector3.down, out hit, 1.05f))
+            {
+                if (!hit.collider.CompareTag("Enemy") && !hit.collider.CompareTag("Hazard"))
+                {
+                    if (storedOnGround == false)
+                    {
+                        StartCoroutine("LandingSequence");
+                    }
+
+                    return true;
+                }
+            }
         }
 
         return false;
