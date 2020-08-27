@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageCalculator : MonoBehaviour
+public class DamageCalculator : MonoBehaviour //More accurately, this class should be called "Decide Player Interaction with Enemies / Hazards"
 {
     PlayerHorizMovement horizMovement;
     Rigidbody rb;
@@ -11,23 +11,39 @@ public class DamageCalculator : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("PunchingBag")) //DEALING DAMAGE TO AN ENEMY OR PUNCHING BAG
+        /////////////////DEALING DAMAGE TO AN ENEMY/////////////////////////////////////////////////////////////////////////////////////
+
+        if (other.gameObject.CompareTag("Enemy"))
         {
-            if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle || other.gameObject.CompareTag("PunchingBag"))
+            GameObject enemy = other.transform.parent.gameObject;
+            while (enemy.GetComponent<IsEnemyCentral>() == null) { enemy = enemy.transform.parent.gameObject; }
+
+            if (GameModeHandler.gamemode == GameModeHandler.GameMode.Battle)
             {
                 float damage = GetDamageToEnemy();
-
-                GameObject enemy = other.transform.parent.gameObject;
-                while (enemy.GetComponent<DamageTaker>() == null) { enemy = enemy.transform.parent.gameObject; }
-
                 DamageTaker damageTaker = enemy.GetComponent<DamageTaker>();
                 damageTaker.TakeDamage(damage);
             }
             else
             {
-                battleController.InitiateBattle(other.gameObject);
+                BattleEnemySpawnInfo spawnInfo = enemy.GetComponent<BattleEnemySpawnInfo>();
+                battleController.InitiateBattle(enemy, spawnInfo);
             }
         }
+
+        /////////////////DEALING DAMAGE TO A PUNCHING BAG/////////////////////////////////////////////////////////////////////////////////////
+
+        if (other.gameObject.CompareTag("PunchingBag"))
+        {
+            GameObject enemy = other.transform.parent.gameObject;
+            while (enemy.GetComponent<DamageTaker>() == null) { enemy = enemy.transform.parent.gameObject; } //todo change how a punching bag takes damage?
+
+            float damage = GetDamageToEnemy();
+            DamageTaker damageTaker = enemy.GetComponent<DamageTaker>();
+            damageTaker.TakeDamage(damage);
+        }
+
+        /////////////////TAKING DAMAGE FROM A HAZARD (TRIGGER) /////////////////////////////////////////////////////////////////////////////////////
 
         HazardData hazardInfo = other.gameObject.GetComponent<HazardData>(); //GETTING HIT BY A HAZARD
 
@@ -37,22 +53,16 @@ public class DamageCalculator : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision other) //GETTING HIT BY A HAZARD. (redundancy because some hazards can't be triggers, since they're concave)
+    void OnCollisionEnter(Collision other)
     {
+        /////////////////TAKING DAMAGE FROM A HAZARD (COLLISION) /////////////////////////////////////////////////////////////////////////////////////
+
         HazardData hazardInfo = other.gameObject.GetComponent<HazardData>();
 
         if (hazardInfo != null && hazardInfo.enabled)
         {
             playerDamageTaker.TakeDamage(hazardInfo.damageToPlayer);
         }
-    }
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-        horizMovement = GetComponent<PlayerHorizMovement>();
-        playerDamageTaker = GetComponent<DamageTaker>();
-        battleController = GameObject.Find("*BATTLE CONTROLLER*").GetComponent<BattleController>();
     }
 
     float GetDamageToEnemy()
@@ -64,5 +74,13 @@ public class DamageCalculator : MonoBehaviour
         damage *= 0.1f;
 
         return damage;
+    }
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        horizMovement = GetComponent<PlayerHorizMovement>();
+        playerDamageTaker = GetComponent<DamageTaker>();
+        battleController = GameObject.Find("*BATTLE CONTROLLER*").GetComponent<BattleController>();
     }
 }

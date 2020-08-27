@@ -12,6 +12,8 @@ public class BattleController : MonoBehaviour
     [SerializeField] GameObject player = null;
     [SerializeField] Rigidbody playerRB = null;
     [SerializeField] GameObject enemyHolder = null;
+    [SerializeField] EnemySpawner enemySpawner = null;
+    [SerializeField] PlatformSpawner platformSpawner = null;
 
     public event EventHandler beginPlayerTurn;
     public event EventHandler beginEnemyTurn;
@@ -80,7 +82,7 @@ public class BattleController : MonoBehaviour
     public void ProcessEnemyAttackEnd() //Called by an enemy's behavior script once its attack has been completed
     {
         enemyAttacksCompleted++;
-        liveEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length; //Redundancy to fix the bug where Destroy() isn't fast enough to lose an enemy's place in the counter at the beginning of turn
+        liveEnemies = enemyHolder.transform.childCount; //todo only count the enemies under the EnemySpawner object //Redundancy to fix the bug where Destroy() isn't fast enough to lose an enemy's place in the counter at the beginning of turn
 
         if (enemyAttacksCompleted == liveEnemies)
         {
@@ -121,10 +123,10 @@ public class BattleController : MonoBehaviour
         vertScript.enabled = true;
     }
 
-    public void InitiateBattle(GameObject enemyBeingFought) //Called by Debug Key or Hitting an Enemy in the Overworld
+    public void InitiateBattle(GameObject enemyBeingFought, BattleEnemySpawnInfo spawnInfo) //Called by Debug Key or Hitting an Enemy in the Overworld
     {
         GameModeHandler.gamemode = GameModeHandler.GameMode.Battle;
-        StartCoroutine("BattleStartSequence", enemyBeingFought);
+        StartCoroutine(BattleStartSequence(enemyBeingFought, spawnInfo));
     }
 
     void EndBattle()
@@ -134,7 +136,7 @@ public class BattleController : MonoBehaviour
         StartCoroutine("BattleEndSequence");
     }
 
-    IEnumerator BattleStartSequence(GameObject enemyFromOverworld)
+    IEnumerator BattleStartSequence(GameObject enemyFromOverworld, BattleEnemySpawnInfo spawnInfo)
     {
         savedPosition = player.transform.position;
         horizScript.enabled = false;
@@ -147,6 +149,11 @@ public class BattleController : MonoBehaviour
 
         battleInitiationImage.fadedIn = false; //for next battle
         Destroy(enemyFromOverworld);
+        platformSpawner.SpawnPlatforms(spawnInfo); //The platform spawner will call the enemy spawner.
+
+        yield return new WaitUntil(() => enemySpawner.enemySpawnComplete);
+        enemySpawner.enemySpawnComplete = false; //for next battle
+
         MetaControl.controlMode = MetaControl.ControlMode.Standard;
         player.transform.position = Vector3.zero;
         playerRB.useGravity = true;

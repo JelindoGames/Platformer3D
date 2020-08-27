@@ -146,7 +146,7 @@ public class PlayerVertMovement : MonoBehaviour
 
             if (Physics.Raycast(transform.position + positionsToStartRay[i], Vector3.down, out hit, 1.05f))
             {
-                if (!hit.collider.CompareTag("Enemy") && !hit.collider.CompareTag("Hazard"))
+                if (!hit.collider.CompareTag("Enemy") && !hit.collider.CompareTag("Hazard") && !hit.collider.CompareTag("PunchingBag"))
                 {
                     if (storedOnGround == false)
                     {

@@ -14,11 +14,6 @@ public class DebugControls : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            battleController.InitiateBattle(null);
-        }
-
         if (Input.GetKeyDown(KeyCode.E))
         {
             battleController.TransitionToEnemyTurn();
