@@ -89,13 +89,13 @@ public class PlayerRotationManager : MonoBehaviour
         switch (MetaControl.controlMode)
         {
             case MetaControl.ControlMode.Standard:
-                if (vertMovement.onGround()) { turnTime = 0.04f; } else { turnTime = 0.2f; }
+                if (vertMovement.onGround()) { turnTime = 0.04f; } else { turnTime = 0.3f; }
                 break;
             case MetaControl.ControlMode.Blast:
-                turnTime = 0.5f;
+                turnTime = 0.4f;
                 break;
             case MetaControl.ControlMode.PostBlast:
-                if (vertMovement.onGround()) { turnTime = 0.15f; } else { turnTime = 0.35f; }
+                if (vertMovement.onGround()) { turnTime = 0.15f; } else { turnTime = 0.5f; }
                 break;
             case MetaControl.ControlMode.Dive:
                 turnTime = 1;

@@ -6,8 +6,8 @@ public class PlatformSpawner : MonoBehaviour //This script is the second in the 
 {
     [SerializeField] EnemySpawner enemySpawner = null;
 
-    public void SpawnPlatforms(BattleEnemySpawnInfo enemyInfo)
+    public void SpawnPlatforms(BattleInfo battleInfo) //Called by BattleController
     {
-        enemySpawner.SpawnEnemies(enemyInfo);
+        enemySpawner.SpawnEnemies(battleInfo);
     }
 }

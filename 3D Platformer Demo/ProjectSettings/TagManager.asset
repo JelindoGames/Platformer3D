@@ -8,6 +8,7 @@ TagManager:
   - Hazard
   - BattleFall
   - PunchingBag
+  - Moving Platform
   layers:
   - Default
   - TransparentFX

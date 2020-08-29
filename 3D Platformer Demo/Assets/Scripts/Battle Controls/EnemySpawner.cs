@@ -7,25 +7,23 @@ public class EnemySpawner : MonoBehaviour //This script is the second in the ser
     [SerializeField] GameObject ringShooter = null;
     [HideInInspector] public bool enemySpawnComplete = false;
 
-    public void SpawnEnemies(BattleEnemySpawnInfo enemyInfo)
+    public void SpawnEnemies(BattleInfo battleInfo) //Called by PlatformSpawner
     {
-        GameObject enemyToSpawn = GetProperEnemyType(enemyInfo);
-
-        GameObject enemyA = Instantiate(enemyToSpawn, new Vector3(-10, 0, 20), Quaternion.Euler(0, 0, 0));
-        enemyA.transform.parent = transform;
-        GameObject enemyB = Instantiate(enemyToSpawn, new Vector3(0, 0, 20), Quaternion.Euler(0, 0, 0));
-        enemyB.transform.parent = transform;
-        GameObject enemyC = Instantiate(enemyToSpawn, new Vector3(10, 0, 20), Quaternion.Euler(0, 0, 0));
-        enemyC.transform.parent = transform;
+        for (int i = 0; i < battleInfo.opponents.Length; i++)
+        {
+            GameObject enemyType = GetEnemyType(battleInfo.opponents[i].type);
+            GameObject enemy = Instantiate(enemyType, battleInfo.opponents[i].position, Quaternion.Euler(0, 0, 0));
+            enemy.transform.parent = transform;
+        }
 
         enemySpawnComplete = true; //Battle Controller will now immediately set as false for the next battle
     }
 
-    GameObject GetProperEnemyType(BattleEnemySpawnInfo enemyInfo)
+    GameObject GetEnemyType(Opponent.Type type)
     {
-        switch (enemyInfo.typeOfEnemy)
+        switch (type)
         {
-            case BattleEnemySpawnInfo.TypeOfEnemy.RingShooter:
+            case Opponent.Type.RingShooter:
                 return ringShooter;
             default:
                 Debug.LogError("The type of enemy you hit is not registered by the enemy spawner. Check the overworld enemy's SpawnInfo and the arena's EnemySpawner script.");

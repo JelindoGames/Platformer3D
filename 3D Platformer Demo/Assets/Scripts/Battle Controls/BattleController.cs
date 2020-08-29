@@ -123,10 +123,10 @@ public class BattleController : MonoBehaviour
         vertScript.enabled = true;
     }
 
-    public void InitiateBattle(GameObject enemyBeingFought, BattleEnemySpawnInfo spawnInfo) //Called by Debug Key or Hitting an Enemy in the Overworld
+    public void InitiateBattle(GameObject enemyBeingFought, BattleInfo battleInfo) //Called by Debug Key or Hitting an Enemy in the Overworld
     {
         GameModeHandler.gamemode = GameModeHandler.GameMode.Battle;
-        StartCoroutine(BattleStartSequence(enemyBeingFought, spawnInfo));
+        StartCoroutine(BattleStartSequence(enemyBeingFought, battleInfo));
     }
 
     void EndBattle()
@@ -136,7 +136,7 @@ public class BattleController : MonoBehaviour
         StartCoroutine("BattleEndSequence");
     }
 
-    IEnumerator BattleStartSequence(GameObject enemyFromOverworld, BattleEnemySpawnInfo spawnInfo)
+    IEnumerator BattleStartSequence(GameObject enemyFromOverworld, BattleInfo battleInfo)
     {
         savedPosition = player.transform.position;
         horizScript.enabled = false;
@@ -149,7 +149,7 @@ public class BattleController : MonoBehaviour
 
         battleInitiationImage.fadedIn = false; //for next battle
         Destroy(enemyFromOverworld);
-        platformSpawner.SpawnPlatforms(spawnInfo); //The platform spawner will call the enemy spawner.
+        platformSpawner.SpawnPlatforms(battleInfo); //The platform spawner will call the enemy spawner.
 
         yield return new WaitUntil(() => enemySpawner.enemySpawnComplete);
         enemySpawner.enemySpawnComplete = false; //for next battle

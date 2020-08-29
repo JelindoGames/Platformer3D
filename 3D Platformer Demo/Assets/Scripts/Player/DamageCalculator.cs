@@ -8,6 +8,8 @@ public class DamageCalculator : MonoBehaviour //More accurately, this class shou
     Rigidbody rb;
     DamageTaker playerDamageTaker;
     BattleController battleController;
+    Vector3 storedPosition;
+    Vector3 absoluteMovement;
 
     void OnTriggerEnter(Collider other)
     {
@@ -26,8 +28,8 @@ public class DamageCalculator : MonoBehaviour //More accurately, this class shou
             }
             else
             {
-                BattleEnemySpawnInfo spawnInfo = enemy.GetComponent<BattleEnemySpawnInfo>();
-                battleController.InitiateBattle(enemy, spawnInfo);
+                BattleInfo battleInfo = enemy.GetComponent<BattleInfo>();
+                battleController.InitiateBattle(enemy, battleInfo);
             }
         }
 
@@ -67,13 +69,35 @@ public class DamageCalculator : MonoBehaviour //More accurately, this class shou
 
     float GetDamageToEnemy()
     {
-        float damage = horizMovement.horizMovementChange.magnitude;
-        if (rb.velocity.y < 0) { damage += -rb.velocity.y; }
+        Vector2 horizAbsoluteMovement = new Vector2(absoluteMovement.x, absoluteMovement.z);
+        float horizontalContribution = horizAbsoluteMovement.magnitude * 5;
+        horizontalContribution = Mathf.Pow(horizontalContribution, 1.4f);
 
+        float verticalContribution = 0;
+
+        if (absoluteMovement.y < 0) { verticalContribution = -absoluteMovement.y * 5; }
+        verticalContribution = Mathf.Pow(verticalContribution, 1.4f);
+
+        float damage = (horizontalContribution + verticalContribution) * 10f;
         damage = (int)damage;
         damage *= 0.1f;
 
+        print("Damage: " + damage + "\n" +
+            "Horizontal Contribution: " + horizontalContribution + " | " +
+            "Vertical Contribution: " + verticalContribution);
+
         return damage;
+    }
+
+    void FixedUpdate()
+    {
+        GetAbsoluteMovement();
+    }
+
+    void GetAbsoluteMovement()
+    {
+        absoluteMovement = transform.position - storedPosition;
+        storedPosition = transform.position;
     }
 
     void Start()
@@ -82,5 +106,6 @@ public class DamageCalculator : MonoBehaviour //More accurately, this class shou
         horizMovement = GetComponent<PlayerHorizMovement>();
         playerDamageTaker = GetComponent<DamageTaker>();
         battleController = GameObject.Find("*BATTLE CONTROLLER*").GetComponent<BattleController>();
+        storedPosition = transform.position;
     }
 }

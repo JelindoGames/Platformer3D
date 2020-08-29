@@ -47,7 +47,7 @@ public class PlayerHorizMovement : MonoBehaviour
         switch (MetaControl.controlMode)
         {
             case MetaControl.ControlMode.Blast:
-                modeMultiplier = 2f;
+                modeMultiplier = 2.25f;
                 break;
             case MetaControl.ControlMode.PostBlast:
                 modeMultiplier -= 2.5f * Time.deltaTime;
@@ -56,10 +56,10 @@ public class PlayerHorizMovement : MonoBehaviour
                 modeMultiplier = 1;
                 break;
             case MetaControl.ControlMode.Dive:
-                modeMultiplier = 1.5f;
+                if (modeMultiplier < 1.5f) modeMultiplier = 1.5f;
                 break;
             case MetaControl.ControlMode.PostDive:
-                if (modeMultiplier > 0.1f) { modeMultiplier -= 2f * Time.deltaTime; }
+                if (modeMultiplier > 0.1f) { modeMultiplier -= 4f * Time.deltaTime; }
                 else { modeMultiplier = 0f; }
                 break;
             case MetaControl.ControlMode.DiveRecovery:

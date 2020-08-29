@@ -35,7 +35,7 @@ public class PlayerVertMovement : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         rb.useGravity = false;
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitUntil(() => !(Input.GetKey(KeyCode.Q) || ControllerWizardData.GetBlastButton));
 
         if (MetaControl.controlMode == MetaControl.ControlMode.Blast)
         {
@@ -43,7 +43,7 @@ public class PlayerVertMovement : MonoBehaviour
             rb.useGravity = true;
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.6f);
 
         if (MetaControl.controlMode == MetaControl.ControlMode.PostBlast)
             MetaControl.controlMode = MetaControl.ControlMode.Standard;
@@ -136,7 +136,7 @@ public class PlayerVertMovement : MonoBehaviour
         }
     }
 
-    public bool onGround()
+    public bool onGround() //Called by PlatformAdapter
     {
         Vector3[] positionsToStartRay = { new Vector3(-0.5f, 0, -0.5f), new Vector3(0, 0, -0.5f), new Vector3(0.5f, 0, -0.5f), new Vector3(-0.5f, 0, 0), new Vector3(0.5f, 0, 0), new Vector3(-0.5f, 0, 0.5f), new Vector3(0, 0, 0.5f), new Vector3(0.5f, 0, 0.5f) };
 
