@@ -18,13 +18,16 @@ public class MovingPlatform : MonoBehaviour
 
     void FixedUpdate()
     {
-        float timeInCycle = Time.time / period;
+        if (period > 0)
+        {
+            float timeInCycle = Time.time / period;
 
-        transform.position = new Vector3
-        (
-            cycleCenter.x + (positionChangeFromCenter.x * Mathf.Sin(timeInCycle)),
-            cycleCenter.y + (positionChangeFromCenter.y * Mathf.Sin(timeInCycle)),
-            cycleCenter.z + (positionChangeFromCenter.z * Mathf.Sin(timeInCycle))
-        );
+            transform.position = new Vector3
+            (
+                cycleCenter.x + (positionChangeFromCenter.x * Mathf.Sin(timeInCycle)),
+                cycleCenter.y + (positionChangeFromCenter.y * Mathf.Sin(timeInCycle)),
+                cycleCenter.z + (positionChangeFromCenter.z * Mathf.Sin(timeInCycle))
+            );
+        }
     }
 }

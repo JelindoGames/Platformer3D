@@ -26,4 +26,6 @@ public class Platform
 {
     public Vector3 position;
     public Vector3 scale;
+    public float period;
+    public Vector3 posChangeFromCenter;
 }

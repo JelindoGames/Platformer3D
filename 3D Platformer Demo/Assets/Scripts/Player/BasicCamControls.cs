@@ -50,7 +50,7 @@ public class BasicCamControls : MonoBehaviour
         float z = Mathf.Sin(angle) * offsetDistance;
         y += Input.GetAxis("Mouse Y") * vertMouseSensitivity;
         y += ControllerWizardData.GetVerticalCamAxis * vertControllerSensitivity * Time.deltaTime;
-        y = Mathf.Clamp(y, -1, 3);
+        y = Mathf.Clamp(y, -1, 5);
         Vector3 offset = new Vector3(x, 3 + y, z);
         return offset;
     }
