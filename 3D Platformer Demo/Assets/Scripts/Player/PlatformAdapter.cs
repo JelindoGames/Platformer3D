@@ -20,7 +20,7 @@ public class PlatformAdapter : MonoBehaviour
             GetPlatformSpeed();
         }
 
-        if (vertMovement.onGround())
+        if (vertMovement.onGround() || Time.timeScale < 1) //If any slow motion effect happens OR hits ground
         {
             KillInertiaItem();
         }
